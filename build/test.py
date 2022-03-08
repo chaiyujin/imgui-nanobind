@@ -13,7 +13,9 @@ def main():
         return
 
     window = glfw.create_window(720, 600, "Opengl GLFW Window", None, None)
-    imgui.set_key_callback(cpp_address(window))
+
+    # imgui.set_key_callback(cpp_address(window))
+    imgui.set_key_callback(window)
 
     if not window:
         glfw.terminate()
