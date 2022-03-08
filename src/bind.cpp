@@ -10,7 +10,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
-void set_key_callback(int* window) {
+void set_key_callback(int64_t window) {
     glfwSetKeyCallback((GLFWwindow*)window, key_callback);
 }
 

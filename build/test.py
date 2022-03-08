@@ -1,6 +1,10 @@
 import glfw
 import ctypes
-from build import imgui
+import imgui
+
+
+def cpp_address(p):
+    return ctypes.cast(p, ctypes.c_void_p).value
 
 
 def main():
@@ -9,8 +13,7 @@ def main():
         return
 
     window = glfw.create_window(720, 600, "Opengl GLFW Window", None, None)
-    print(type(window), window.dummy)
-    # imgui.set_key_callback(window)
+    imgui.set_key_callback(cpp_address(window))
 
     if not window:
         glfw.terminate()
