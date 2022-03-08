@@ -1,5 +1,11 @@
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/string.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+
+#include "bind-imgui/bind-imgui.hpp"
 
 namespace nb = nanobind;
 
@@ -59,6 +65,53 @@ void set_key_callback(RawPtr window) {
     glfwSetKeyCallback((GLFWwindow*)window.addr, key_callback);
 }
 
-NB_MODULE(imgui, m) {
+void test_key_callback(nanobind::module_ & m) {
     m.def("set_key_callback", &set_key_callback);
+}
+
+void naive_demo_bind(nanobind::module_ & m) {
+    m.def("create_context", []() -> intptr_t {
+        IMGUI_CHECKVERSION();
+        return (intptr_t)ImGui::CreateContext();
+    });
+    m.def("destroy_context", []() {
+        ImGui::DestroyContext();
+    });
+    m.def("style_colors_dark", []() {
+        ImGui::StyleColorsDark();
+    });
+    m.def("new_frame", []() {
+        ImGui::NewFrame();
+    });
+    m.def("render", []() {
+        ImGui::Render();
+    });
+
+    m.def("demo", []() {
+        ImGui::ShowDemoWindow();
+    });
+
+    m.def("impl_init", [](RawPtr window) {
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)window.addr, true);
+        ImGui_ImplOpenGL3_Init("#version 150");
+    });
+    m.def("impl_shutdown", []() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+    });
+    m.def("impl_new_frame", []() {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+    });
+    m.def("impl_render", []() {
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    });
+}
+
+NB_MODULE(imgui, m) {
+    imgui_bind_all(m);
+
+    test_key_callback(m);
+
+    naive_demo_bind(m);
 }
