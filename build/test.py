@@ -40,6 +40,8 @@ def main():
     imgui.create_context()
     imgui.style_colors_dark()
 
+    print(int(imgui.ImGuiItemFlags.ReadOnly))
+
     imgui.impl_init(window)
     io = imgui.get_IO()
     style = imgui.get_style()
