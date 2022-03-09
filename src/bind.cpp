@@ -70,6 +70,9 @@ void test_key_callback(nanobind::module_ & m) {
 }
 
 void naive_demo_bind(nanobind::module_ & m) {
+    m.def("get_IO", &ImGui::GetIO, nb::rv_policy::reference);
+    m.def("get_style", &ImGui::GetStyle, nb::rv_policy::reference);
+
     m.def("create_context", []() -> intptr_t {
         IMGUI_CHECKVERSION();
         return (intptr_t)ImGui::CreateContext();

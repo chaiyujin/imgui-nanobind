@@ -1,6 +1,7 @@
 import glfw
 import ctypes
 import imgui
+from imgui import ImVec2, ImVec4, ImRect
 from OpenGL import GL as gl
 
 
@@ -30,24 +31,20 @@ def main():
     glfw.make_context_current(window)
     glfw.swap_interval(1)  # enable vsync
 
-    # vec.y = 11
-    print("test ImVec2")
-    print(imgui.ImVec2(0, 2))
-    print("----")
-
-    rect = imgui.ImRect(imgui.ImVec2(0, 0), imgui.ImVec2(10, 20))
-    print("try tuple -> imvec2")
+    rect = ImRect((0, 0), (10, 20))
     print(rect.contains((0, 0)))
-    print("----")
-    print("try return imvec2")
+    print(rect.contains(ImRect((0, 0), (10, 22))))
     print(rect.get_center())
-    print("----")
     print(rect.to_vec4())
 
     imgui.create_context()
     imgui.style_colors_dark()
 
     imgui.impl_init(window)
+    io = imgui.get_IO()
+    style = imgui.get_style()
+    style.window_padding = (20, 20)
+    print(io.display_size)
 
     while not glfw.window_should_close(window):
         glfw.poll_events()
@@ -56,6 +53,7 @@ def main():
         imgui.new_frame()
 
         imgui.demo()
+        print(io.display_size)
 
         imgui.render()
         w, h = glfw.get_framebuffer_size(window)

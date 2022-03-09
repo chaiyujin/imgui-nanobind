@@ -1,49 +1,9 @@
 #include "types.hpp"
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/stl/pair.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
 namespace nb = nanobind;
-namespace nanobind::detail {
-    template <> struct type_caster<ImVec2> {
-        using Type = ImVec2;
-        static constexpr auto Name = const_name<Type>();
-        static constexpr bool IsClass = true;
-        template <typename T> using Cast = movable_cast_t<T>;
-        operator Type*() { return value; }
-        operator Type&() { if (!value) raise_next_overload(); return *value; }
-        operator Type&&() && { if (!value) raise_next_overload(); return (Type &&) *value; }
-        Type *value = nullptr;
-
-        NB_INLINE bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
-            bool got = nb_type_get(&typeid(Type), src.ptr(), flags, cleanup, (void **) &value);
-            if (got) { }
-            else if (nb::isinstance<nb::tuple>(src)) {
-                auto tmp = nb::cast<nb::tuple>(src);
-                if (tmp.size() == 2) {
-                    value = new ImVec2(nb::cast<float>(tmp[0]), nb::cast<float>(tmp[1]));
-                    got = true;
-                }
-                else {
-                    fmt::print("[Error] ImVec2: Given tuple don't has 2 elements, but {}!", tmp.size());
-                }
-            }
-            return got;
-        }
-        template <typename T>
-        NB_INLINE static handle from_cpp(T &&value, rv_policy policy, cleanup_list *cleanup) noexcept {
-            Type *value_p;
-            if constexpr (is_pointer_v<T>)
-                value_p = (Type *) value;
-            else
-                value_p = (Type *) &value;
-            return nb_type_put(&typeid(Type), value_p, infer_policy<T>(policy), cleanup, nullptr);
-        }
-    };
-} // namespace nanobind::detail
-
 
 void imgui_def_types(nb::module_ & m) {
 
@@ -118,4 +78,65 @@ void imgui_def_types(nb::module_ & m) {
         .def("is_inverted",    &ImRect::IsInverted)
         .def("to_vec4",        &ImRect::ToVec4)
     ;
+
+    nb::class_<ImGuiIO>(m, "ImGuiIO")
+        // init
+        .def(nb::init<>())
+        // members
+        .def_readwrite("display_size", &ImGuiIO::DisplaySize)
+    ;
+
+    nb::class_<ImGuiStyle>(m, "ImGuiStyle")
+        // init
+        .def(nb::init<>())
+        // members
+        .def_readwrite("window_padding", &ImGuiStyle::WindowPadding)
+    ;
 }
+
+NAMESPACE_BEGIN(NB_NAMESPACE)
+NAMESPACE_BEGIN(detail)
+
+template <> struct type_caster<ImVec2> {
+    CLASS_CASTER(ImVec2)
+
+    bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
+        auto got = try_init(src, flags, cleanup);
+        if (!got) {
+            if (nanobind::isinstance<nanobind::tuple>(src)) {
+                auto tmp = nanobind::cast<nanobind::tuple>(src);
+                if (tmp.size() == 2) {
+                    value = new ImVec2(nanobind::cast<float>(tmp[0]), nanobind::cast<float>(tmp[1]));
+                    got = true;
+                }
+            }
+        }
+        return got;
+    }
+};
+
+template <> struct type_caster<ImVec4> {
+    CLASS_CASTER(ImVec4)
+
+    bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
+        auto got = try_init(src, flags, cleanup);
+        if (!got) {
+            if (nanobind::isinstance<nanobind::tuple>(src)) {
+                auto tmp = nanobind::cast<nanobind::tuple>(src);
+                if (tmp.size() == 4) {
+                    value = new ImVec4(
+                        nanobind::cast<float>(tmp[0]),
+                        nanobind::cast<float>(tmp[1]),
+                        nanobind::cast<float>(tmp[2]),
+                        nanobind::cast<float>(tmp[3])
+                    );
+                    got = true;
+                }
+            }
+        }
+        return got;
+    }
+};
+
+NAMESPACE_END(detail)
+NAMESPACE_END(NB_NAMESPACE)
