@@ -30,14 +30,18 @@ def main():
     glfw.make_context_current(window)
     glfw.swap_interval(1)  # enable vsync
 
-    vec = imgui.ImVec2(10, 20)
-    vec.y = 11
-    print(vec)
-    print(vec.x, vec.y, vec[0])
+    # vec.y = 11
+    print("test ImVec2")
+    print(imgui.ImVec2(0, 2))
+    print("----")
 
     rect = imgui.ImRect(imgui.ImVec2(0, 0), imgui.ImVec2(10, 20))
+    print("try tuple -> imvec2")
+    print(rect.contains((0, 0)))
+    print("----")
+    print("try return imvec2")
     print(rect.get_center())
-    print(rect.contains_point(imgui.ImVec2(1, 2)))
+    print("----")
     print(rect.to_vec4())
 
     imgui.create_context()

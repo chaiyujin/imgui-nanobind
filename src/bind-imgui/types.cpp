@@ -1,10 +1,49 @@
 #include "types.hpp"
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/tuple.h>
+#include <nanobind/stl/pair.h>
 #include <fmt/format.h>
-#include <imgui.h>
-#include <imgui_internal.h>
+#include <fmt/ostream.h>
 
 namespace nb = nanobind;
+namespace nanobind::detail {
+    template <> struct type_caster<ImVec2> {
+        using Type = ImVec2;
+        static constexpr auto Name = const_name<Type>();
+        static constexpr bool IsClass = true;
+        template <typename T> using Cast = movable_cast_t<T>;
+        operator Type*() { return value; }
+        operator Type&() { if (!value) raise_next_overload(); return *value; }
+        operator Type&&() && { if (!value) raise_next_overload(); return (Type &&) *value; }
+        Type *value = nullptr;
+
+        NB_INLINE bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
+            bool got = nb_type_get(&typeid(Type), src.ptr(), flags, cleanup, (void **) &value);
+            if (got) { }
+            else if (nb::isinstance<nb::tuple>(src)) {
+                auto tmp = nb::cast<nb::tuple>(src);
+                if (tmp.size() == 2) {
+                    value = new ImVec2(nb::cast<float>(tmp[0]), nb::cast<float>(tmp[1]));
+                    got = true;
+                }
+                else {
+                    fmt::print("[Error] ImVec2: Given tuple don't has 2 elements, but {}!", tmp.size());
+                }
+            }
+            return got;
+        }
+        template <typename T>
+        NB_INLINE static handle from_cpp(T &&value, rv_policy policy, cleanup_list *cleanup) noexcept {
+            Type *value_p;
+            if constexpr (is_pointer_v<T>)
+                value_p = (Type *) value;
+            else
+                value_p = (Type *) &value;
+            return nb_type_put(&typeid(Type), value_p, infer_policy<T>(policy), cleanup, nullptr);
+        }
+    };
+} // namespace nanobind::detail
+
 
 void imgui_def_types(nb::module_ & m) {
 
@@ -63,13 +102,13 @@ void imgui_def_types(nb::module_ & m) {
         .def("get_TR",         &ImRect::GetTR)
         .def("get_BL",         &ImRect::GetBL)
         .def("get_BR",         &ImRect::GetBR)
-        .def("contains_point", [](ImRect const & r, ImVec2 const & p) -> bool { return r.Contains(p); })
-        .def("contains_rect",  [](ImRect const & r, ImRect const & b) -> bool { return r.Contains(b); })
-        .def("overlaps",       [](ImRect const & r, ImRect const & b) -> bool { return r.Overlaps(b); })
-        .def("add_point",      [](ImRect & r, ImVec2 const & p) { r.Add(p); })
-        .def("add_rect",       [](ImRect & r, ImRect const & b) { r.Add(b); })
-        .def("expand_both",    [](ImRect & r, float b) { r.Expand(b); })
-        .def("expand_each",    [](ImRect & r, ImVec2 const & b) { r.Expand(b); })
+        .def("contains",       nb::overload_cast<ImVec2 const &>(&ImRect::Contains, nb::const_))
+        .def("contains",       nb::overload_cast<ImRect const &>(&ImRect::Contains, nb::const_))
+        .def("overlaps",       &ImRect::Overlaps)
+        .def("add",            nb::overload_cast<ImVec2 const &>(&ImRect::Add))
+        .def("add",            nb::overload_cast<ImRect const &>(&ImRect::Add))
+        .def("expand",         nb::overload_cast<float>         (&ImRect::Expand))
+        .def("expand",         nb::overload_cast<ImVec2 const &>(&ImRect::Expand))
         .def("translate",      &ImRect::Translate)
         .def("translate_x",    &ImRect::TranslateX)
         .def("translate_y",    &ImRect::TranslateY)
