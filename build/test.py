@@ -31,22 +31,25 @@ def main():
     glfw.make_context_current(window)
     glfw.swap_interval(1)  # enable vsync
 
+    vec = ImVec2((10, 200))
+    print(vec)
+    vec[0] = 20
+    print(vec)
     rect = ImRect((0, 0), (10, 20))
-    print(rect.contains((0, 0)))
-    print(rect.contains(ImRect(0, 0, 10, 22)))
-    print(rect.get_center())
-    print(rect.to_vec4())
+    print(rect.Contains((0, 0)))
+    print(rect.Contains(ImRect(0, 0, 10, 22)))
+    print(rect.GetCenter())
+    print(rect.ToVec4())
 
     imgui_ctx = imgui.create_context()
+    io = imgui.get_IO()
+    print(io.IniFilename)
+
     imgui.style_colors_dark()
 
     print(int(imgui.ImGuiItemFlags.ReadOnly))
 
     imgui.impl_init(window)
-    io = imgui.get_IO()
-    style = imgui.get_style()
-    style.window_padding = (20, 20)
-    print(io.display_size)
 
     while not glfw.window_should_close(window):
         glfw.poll_events()
@@ -55,7 +58,6 @@ def main():
         imgui.new_frame()
 
         imgui.demo()
-        print(io.display_size[0])
 
         imgui.render()
         w, h = glfw.get_framebuffer_size(window)

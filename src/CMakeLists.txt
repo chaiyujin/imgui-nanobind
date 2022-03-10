@@ -44,7 +44,8 @@ target_link_libraries(test_glfw glfw)
 nanobind_add_module(imgui ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES}
     bind.cpp
     bind-imgui/enums_auto.cpp
-    bind-imgui/types.cpp
+    bind-imgui/types_auto.cpp
+    # bind-imgui/types.cpp
 )
 target_include_directories(imgui PRIVATE ${IMGUI_INC_DIRS} ${IMGUI_IMPL_INC_DIRS} ${PROJECT_SOURCE_DIR})
 target_link_libraries(imgui PRIVATE glfw fmt)

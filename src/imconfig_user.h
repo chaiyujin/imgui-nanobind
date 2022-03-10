@@ -124,14 +124,27 @@ namespace ImGui
 */
 
 #include <memory>
+#include <nanobind/nanobind.h>
+#include <fmt/format.h>
 
 #define IM_VEC2_CLASS_EXTRA \
-    constexpr ImVec2(std::tuple<float, float> const & _v) : x(std::get<0>(_v)), y(std::get<1>(_v)) {}
+    constexpr ImVec2(nanobind::tuple const & v) : ImVec2() { \
+        assert(v.size() == 2 && "[ImVec2]: Given python tuple doen't have 2 elements!"); \
+        x = nanobind::cast<float>(v[0]); \
+        y = nanobind::cast<float>(v[1]); \
+    } \
+    auto to_string() const -> std::string { \
+        return fmt::format("ImVec2({}, {})", x, y); \
+    }
 
 #define IM_VEC4_CLASS_EXTRA\
-    constexpr ImVec4(std::tuple<float, float, float, float> const & _v) : x(std::get<0>(_v)), y(std::get<1>(_v)), z(std::get<2>(_v)), w(std::get<3>(_v)) {} \
-    constexpr ImVec4(std::tuple<std::tuple<float, float>, std::tuple<float, float>> const & _v) \
-        : x(std::get<0>(std::get<0>(_v))) \
-        , y(std::get<1>(std::get<0>(_v))) \
-        , z(std::get<0>(std::get<1>(_v))) \
-        , w(std::get<1>(std::get<1>(_v))) {}
+    constexpr ImVec4(nanobind::tuple const & v) : ImVec4() { \
+        assert(v.size() == 4 && "[ImVec4]: Given python tuple doen't have 4 elements!"); \
+        x = nanobind::cast<float>(v[0]); \
+        y = nanobind::cast<float>(v[1]); \
+        z = nanobind::cast<float>(v[2]); \
+        w = nanobind::cast<float>(v[3]); \
+    } \
+    auto to_string() const -> std::string { \
+        return fmt::format("ImVec4({}, {}, {}, {})", x, y, z, w); \
+    }

@@ -1,7 +1,5 @@
 #include "types.hpp"
 #include <nanobind/stl/string.h>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 
 namespace nb = nanobind;
 
@@ -12,13 +10,11 @@ void imgui_def_types(nb::module_ & m) {
         .def_readwrite("y", &ImVec2::y)
         .def(nb::init<>())
         .def(nb::init<float, float>())
-        .def(nb::init<const std::pair<float, float> &>())
-        .def("__getitem__", [](ImVec2 const & self, size_t idx) { return self[idx]; })
-        .def("__getitem__", [](ImVec2 const & self, size_t idx) { return self[idx]; })
-        // repr
-        .def("__repr__", [](ImVec2 const & v) {
-            return fmt::format("ImVec2({}, {})", v.x, v.y);
-        })
+        .def(nb::init_implicit<const nanobind::tuple &>())
+        .def("__getitem__", nb::overload_cast<size_t>(&ImVec2::operator[], nb::const_))
+        .def("__getitem__", nb::overload_cast<size_t>(&ImVec2::operator[]))
+        .def("__setitem__", [](ImVec2 & self, size_t idx, const float & value) { self[idx] = value; })
+        .def("__repr__", &ImVec2::to_string)
     ;
 
     nb::class_<ImVec4>(m, "ImVec4")
@@ -28,36 +24,9 @@ void imgui_def_types(nb::module_ & m) {
         .def_readwrite("w", &ImVec4::w)
         .def(nb::init<>())
         .def(nb::init<float, float, float, float>())
-        .def(nb::init<const std::tuple<float, float, float, float> &>())
-        // repr
-        .def("__repr__", [](ImVec4 const & v) {
-            return fmt::format("ImVec4({}, {}, {}, {})", v.x, v.y, v.z, v.w);
-        })
+        .def(nb::init_implicit<const nanobind::tuple &>())
+        .def("__repr__", &ImVec4::to_string)
     ;
-
-    // nb::class_<ImVec2>(m, "ImVec2")
-    //     // members
-    //     .def_readwrite("x", &ImVec2::x)
-    //     .def_readwrite("y", &ImVec2::y)
-    //     // init
-    //     .def(nb::init<>())
-    //     .def(nb::init<float, float>())
-    //     // operators
-    //     .def("__getitem__", [](ImVec2 const & v, int idx) {
-    //         return v[idx];
-    //     })
-    // ;
-
-    // nb::class_<ImVec4>(m, "ImVec4")
-    //     // members
-    //     .def_readwrite("x", &ImVec4::x)
-    //     .def_readwrite("y", &ImVec4::y)
-    //     .def_readwrite("z", &ImVec4::z)
-    //     .def_readwrite("w", &ImVec4::w)
-    //     // init
-    //     .def(nb::init<>())
-    //     .def(nb::init<float, float, float, float>())
-    // ;
 
     nb::class_<ImRect>(m, "ImRect")
         // members
@@ -113,51 +82,3 @@ void imgui_def_types(nb::module_ & m) {
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding)
     ;
 }
-
-
-NAMESPACE_BEGIN(NB_NAMESPACE)
-NAMESPACE_BEGIN(detail)
-
-template <> struct type_caster<ImVec2> {
-    CLASS_CASTER(ImVec2)
-
-    bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
-        auto got = try_init(src, flags, cleanup);
-        if (!got) {
-            if (nanobind::isinstance<nanobind::tuple>(src)) {
-                auto tmp = nanobind::cast<nanobind::tuple>(src);
-                if (tmp.size() == 2) {
-                    value = new ImVec2(nanobind::cast<float>(tmp[0]), nanobind::cast<float>(tmp[1]));
-                    got = true;
-                }
-            }
-        }
-        return got;
-    }
-};
-
-template <> struct type_caster<ImVec4> {
-    CLASS_CASTER(ImVec4)
-
-    bool from_python(handle src, uint8_t flags, cleanup_list *cleanup) noexcept {
-        auto got = try_init(src, flags, cleanup);
-        if (!got) {
-            if (nanobind::isinstance<nanobind::tuple>(src)) {
-                auto tmp = nanobind::cast<nanobind::tuple>(src);
-                if (tmp.size() == 4) {
-                    value = new ImVec4(
-                        nanobind::cast<float>(tmp[0]),
-                        nanobind::cast<float>(tmp[1]),
-                        nanobind::cast<float>(tmp[2]),
-                        nanobind::cast<float>(tmp[3])
-                    );
-                    got = true;
-                }
-            }
-        }
-        return got;
-    }
-};
-
-NAMESPACE_END(detail)
-NAMESPACE_END(NB_NAMESPACE)
