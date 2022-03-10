@@ -37,7 +37,7 @@ def main():
     print(rect.get_center())
     print(rect.to_vec4())
 
-    imgui.create_context()
+    imgui_ctx = imgui.create_context()
     imgui.style_colors_dark()
 
     print(int(imgui.ImGuiItemFlags.ReadOnly))
@@ -66,6 +66,8 @@ def main():
 
         glfw.swap_buffers(window)
 
+    imgui.impl_shutdown()
+    imgui.destroy_context(imgui_ctx)
     glfw.terminate()
 
 

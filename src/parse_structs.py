@@ -1,32 +1,84 @@
+import os
 import clang.cindex
-from clang.cindex import CursorKind
+from clang.cindex import CursorKind, Type, TypeKind, AccessSpecifier
 
 
-WHITE_LIST = ["ImGuiStyle", "ImDrawChannel"]
+WHITE_LIST = ["ImVec2", "ImVec4"]
 
 
 def find_structs(node, results):
     if node.kind == CursorKind.STRUCT_DECL and node.spelling.startswith("Im"):
         if WHITE_LIST is not None and node.spelling not in WHITE_LIST:
             return
-        if len(list(node.get_children())) == 0:
-            return
-        print(node.spelling, node.kind, node.brief_comment)
 
-        for x in node.get_tokens():
-            # print(x.kind)
-            # print("  " + str(x.extent))
-            print("  " + str(x.spelling) + "")
+        struct_name = node.spelling
+        results[struct_name] = dict(fields=[], constructors=[], methods=[])
+
+        # inspect children
         for child in node.get_children():
-            print(f"  {child.spelling:30}", "\t\t", child.kind, child.is_default_constructor())
-            # for t in child.get_tokens():
-            #     print("   ", t.kind, t.spelling)
-        # quit(1)
+            # only public
+            if child.access_specifier != AccessSpecifier.PUBLIC:
+                continue
+
+            # field
+            if child.kind == CursorKind.FIELD_DECL:
+                field = dict(name=child.spelling, type=child.type.spelling)
+                results[struct_name]['fields'].append(field)
+            elif child.kind == CursorKind.CONSTRUCTOR:
+                constructor = dict(args=[])
+                for t in child.get_arguments():
+                    constructor['args'].append(dict(type=t.type.spelling, name=t.spelling))
+                results[struct_name]['constructors'].append(constructor)
+            elif child.kind == CursorKind.CXX_METHOD:
+                fn = child.spelling
+                method = dict(name=fn, args=[], return_type=child.type.get_result().spelling)
+                for t in child.get_arguments():
+                    method['args'].append(dict(type=t.type.spelling, name=t.spelling))
+                results[struct_name]['methods'].append(method)
 
 
 all_structs = dict()
-# imgui.h, imgui_internal.h
+imgui_config = '<imconfig_user.h>'
+args = [
+    f"-DIMGUI_USER_CONFIG={imgui_config}",
+    f"-I{os.path.abspath(os.path.dirname(__file__))}"
+]
+
 index = clang.cindex.Index.create()
-tu = index.parse('../third-party/imgui/imgui_internal.h')  # imgui.h is included
+tu = index.parse('../third-party/imgui/imgui_demo.cpp', args=args)
 for c in tu.cursor.get_children():
     find_structs(c, all_structs)
+
+
+def gen_struct_code(struct_name, children):
+    _tmpl_begin = '    nb::class_<{0}>(m, "{0}")\n'
+    _tmpl_field = '        .def_readwrite("{1}", &{0}::{1})\n'
+    _tmpl_ctor  = '        .def(nb::init<{}>())\n'
+    _tmpl_end   = '    ;\n\n'
+
+    code = ''
+    code += _tmpl_begin.format(struct_name)
+
+    # fields
+    for field in children['fields']:
+        # simple fields
+        code += _tmpl_field.format(struct_name, field['name'])
+    
+    # constructors
+    for ctor in children['constructors']:
+        code += _tmpl_ctor.format(', '.join(x['type'] for x in ctor['args']))
+    
+    # # methods
+    # for method in children['methods']:
+    #     if method['name'] == 'operator[]':
+    #        print(method) 
+    #     else:
+    #         raise NotImplementedError()
+
+    code += _tmpl_end
+    print(code, end='')
+    return code
+
+
+for n, v in all_structs.items():
+    gen_struct_code(n, v)
