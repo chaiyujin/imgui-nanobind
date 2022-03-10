@@ -129,4 +129,9 @@ namespace ImGui
     constexpr ImVec2(std::tuple<float, float> const & _v) : x(std::get<0>(_v)), y(std::get<1>(_v)) {}
 
 #define IM_VEC4_CLASS_EXTRA\
-    constexpr ImVec4(std::tuple<float, float, float, float> const & _v) : x(std::get<0>(_v)), y(std::get<1>(_v)), z(std::get<2>(_v)), w(std::get<3>(_v)) {}
+    constexpr ImVec4(std::tuple<float, float, float, float> const & _v) : x(std::get<0>(_v)), y(std::get<1>(_v)), z(std::get<2>(_v)), w(std::get<3>(_v)) {} \
+    constexpr ImVec4(std::tuple<std::tuple<float, float>, std::tuple<float, float>> const & _v) \
+        : x(std::get<0>(std::get<0>(_v))) \
+        , y(std::get<1>(std::get<0>(_v))) \
+        , z(std::get<0>(std::get<1>(_v))) \
+        , w(std::get<1>(std::get<1>(_v))) {}

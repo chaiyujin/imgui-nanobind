@@ -33,7 +33,7 @@ def main():
 
     rect = ImRect((0, 0), (10, 20))
     print(rect.contains((0, 0)))
-    print(rect.contains(ImRect((0, 0), (10, 22))))
+    print(rect.contains(ImRect(0, 0, 10, 22)))
     print(rect.get_center())
     print(rect.to_vec4())
 
@@ -55,7 +55,7 @@ def main():
         imgui.new_frame()
 
         imgui.demo()
-        print(io.display_size)
+        print(io.display_size[0])
 
         imgui.render()
         w, h = glfw.get_framebuffer_size(window)

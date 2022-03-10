@@ -8,16 +8,13 @@ namespace nb = nanobind;
 void imgui_def_types(nb::module_ & m) {
 
     nb::class_<ImVec2>(m, "ImVec2")
-        // members
         .def_readwrite("x", &ImVec2::x)
         .def_readwrite("y", &ImVec2::y)
-        // init
         .def(nb::init<>())
         .def(nb::init<float, float>())
-        // operators
-        .def("__getitem__", [](ImVec2 const & v, int idx) {
-            return v[idx];
-        })
+        .def(nb::init<const std::pair<float, float> &>())
+        .def("__getitem__", [](ImVec2 const & self, size_t idx) { return self[idx]; })
+        .def("__getitem__", [](ImVec2 const & self, size_t idx) { return self[idx]; })
         // repr
         .def("__repr__", [](ImVec2 const & v) {
             return fmt::format("ImVec2({}, {})", v.x, v.y);
@@ -25,19 +22,42 @@ void imgui_def_types(nb::module_ & m) {
     ;
 
     nb::class_<ImVec4>(m, "ImVec4")
-        // members
         .def_readwrite("x", &ImVec4::x)
         .def_readwrite("y", &ImVec4::y)
         .def_readwrite("z", &ImVec4::z)
         .def_readwrite("w", &ImVec4::w)
-        // init
         .def(nb::init<>())
         .def(nb::init<float, float, float, float>())
+        .def(nb::init<const std::tuple<float, float, float, float> &>())
         // repr
         .def("__repr__", [](ImVec4 const & v) {
             return fmt::format("ImVec4({}, {}, {}, {})", v.x, v.y, v.z, v.w);
         })
     ;
+
+    // nb::class_<ImVec2>(m, "ImVec2")
+    //     // members
+    //     .def_readwrite("x", &ImVec2::x)
+    //     .def_readwrite("y", &ImVec2::y)
+    //     // init
+    //     .def(nb::init<>())
+    //     .def(nb::init<float, float>())
+    //     // operators
+    //     .def("__getitem__", [](ImVec2 const & v, int idx) {
+    //         return v[idx];
+    //     })
+    // ;
+
+    // nb::class_<ImVec4>(m, "ImVec4")
+    //     // members
+    //     .def_readwrite("x", &ImVec4::x)
+    //     .def_readwrite("y", &ImVec4::y)
+    //     .def_readwrite("z", &ImVec4::z)
+    //     .def_readwrite("w", &ImVec4::w)
+    //     // init
+    //     .def(nb::init<>())
+    //     .def(nb::init<float, float, float, float>())
+    // ;
 
     nb::class_<ImRect>(m, "ImRect")
         // members
@@ -93,6 +113,7 @@ void imgui_def_types(nb::module_ & m) {
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding)
     ;
 }
+
 
 NAMESPACE_BEGIN(NB_NAMESPACE)
 NAMESPACE_BEGIN(detail)

@@ -51,10 +51,11 @@ for c in tu.cursor.get_children():
 
 
 def gen_struct_code(struct_name, children):
-    _tmpl_begin = '    nb::class_<{0}>(m, "{0}")\n'
-    _tmpl_field = '        .def_readwrite("{1}", &{0}::{1})\n'
-    _tmpl_ctor  = '        .def(nb::init<{}>())\n'
-    _tmpl_end   = '    ;\n\n'
+    _tmpl_begin  = '    nb::class_<{0}>(m, "{0}")\n'
+    _tmpl_field  = '        .def_readwrite("{1}", &{0}::{1})\n'
+    _tmpl_ctor   = '        .def(nb::init<{}>())\n'
+    _tmpl_lambda = '        .def("{1}", []({0} const & self, {2}) {{ {3} }})\n'
+    _tmpl_end    = '    ;\n\n'
 
     code = ''
     code += _tmpl_begin.format(struct_name)
@@ -68,12 +69,16 @@ def gen_struct_code(struct_name, children):
     for ctor in children['constructors']:
         code += _tmpl_ctor.format(', '.join(x['type'] for x in ctor['args']))
     
-    # # methods
-    # for method in children['methods']:
-    #     if method['name'] == 'operator[]':
-    #        print(method) 
-    #     else:
-    #         raise NotImplementedError()
+    # methods
+    for method in children['methods']:
+        if method['name'] == 'operator[]':
+            fn_txt = ''
+            if len(method['args']) == 1:
+                fn_txt += f"return self[{method['args'][0]['name']}];"
+            args_txt = ', '.join(f"{x['type']} {x['name']}" for x in method['args'])
+            code += _tmpl_lambda.format(struct_name, '__getitem__', args_txt, fn_txt)
+        else:
+            raise NotImplementedError()
 
     code += _tmpl_end
     print(code, end='')
