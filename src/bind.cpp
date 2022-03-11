@@ -58,6 +58,25 @@ template <> struct type_caster<PtrWrapper<GLFWwindow>> {
 };
 } // namespace nanobind::detail
 
+
+// namespace nanobind::detail {
+// template <> struct type_caster<const char *> {
+//     NB_TYPE_CASTER(const char *, const_name("const_char_ptr"));
+
+//     bool from_python(handle src, uint8_t flags, cleanup_list * cleanup) noexcept {
+//         /* Extract PyObject from handle */
+//         PyObject *source = src.ptr();
+//         const char * value = PyUnicode_AsUTF8AndSize(src.ptr(), nullptr);
+//         printf("%s\n", value);
+//         return true;
+//     }
+
+//     static handle from_cpp(const char * const & value, rv_policy, cleanup_list *) noexcept {
+//         return nb::str(value);
+//     }
+// };
+// } // namespace nanobind::detail
+
 // * -------------------------------------------------------------------------------------------------------------- * //
 // *                                                      Test                                                      * //
 // * -------------------------------------------------------------------------------------------------------------- * //
@@ -78,6 +97,11 @@ void test_key_callback(nanobind::module_ & m) {
 }
 
 void naive_demo_bind(nanobind::module_ & m) {
+
+    m.def("test_char_ptr", [](nb::str & str) {
+        printf("%s\n", str.c_str());
+    });
+
     m.def("get_IO", &ImGui::GetIO, nb::rv_policy::reference);
     m.def("get_style", &ImGui::GetStyle, nb::rv_policy::reference);
 

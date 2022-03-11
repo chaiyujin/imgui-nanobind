@@ -44,9 +44,11 @@ def main():
     imgui_ctx = imgui.create_context()
     io = imgui.get_IO()
     print(io.IniFilename)
+    io.IniFilename = "imgui_new.ini"
 
     imgui.style_colors_dark()
 
+    imgui.test_char_ptr("Hellow!a")
     print(int(imgui.ImGuiItemFlags.ReadOnly))
 
     imgui.impl_init(window)
@@ -68,6 +70,7 @@ def main():
 
         glfw.swap_buffers(window)
 
+    print(io.IniFilename)
     imgui.impl_shutdown()
     imgui.destroy_context(imgui_ctx)
     glfw.terminate()
