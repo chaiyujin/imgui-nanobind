@@ -42,6 +42,7 @@ def find_structs(node, results):
                     method['args'].append(dict(type=type_name, name=t.spelling, cursor=t))
                 results[struct_name]['methods'].append(method)
 
+
 _DIR = os.path.dirname(os.path.abspath(__file__))
 all_structs = dict()
 imgui_config = '<imconfig_user.h>'
@@ -67,20 +68,30 @@ def gen_struct_code(struct_name, children):
     code = ''
     code += _tmpl_begin.format(struct_name)
 
-    # fields
+    # * -------------------------------------------------- fields -------------------------------------------------- * #
+
     for field in children['fields']:
         # simple fields
         if field['type'] == "const char *":
+            # > const char *
             code += _tmpl_indent
-            code += f'.def_property_readonly("{field["name"]}", []({struct_name} const & self) {{ return self.{field["name"]}; }})\n'
+            code += (
+                f'.def_property("{field["name"]}",'
+                f' []({struct_name} const & self) {{ return self.{field["name"]}; }},'
+                f' []({struct_name} & self, nb::str & value) {{ self.{field["name"]} = value.c_str(); }} )\n'
+            )
+
         elif field['type'].find("*") >= 0:
+            # > pointers, ignore
             continue
         elif field['type'].find("[") >= 0 and field['type'].find("]") >= 0:
+            # > array, ignore
             continue
         else:
             code += _tmpl_field.format(struct_name, field['name'])
-    
-    # constructors
+
+    # * ----------------------------------------------- constructors ----------------------------------------------- * #
+
     for ctor in children['constructors']:
         args_txt = ', '.join(x['type'] for x in ctor['args'])
         # implicit for nanabind
@@ -88,8 +99,9 @@ def gen_struct_code(struct_name, children):
             code += _tmpl_indent + f'.def(nb::init_implicit<{args_txt}>())\n'
         else:
             code += _tmpl_indent + f'.def(nb::init<{args_txt}>())\n'
-    
-    # methods
+
+    # * -------------------------------------------------- methods ------------------------------------------------- * #
+
     count_method = dict()
     max_name_len = 11
     for method in children['methods']:
@@ -119,13 +131,19 @@ def gen_struct_code(struct_name, children):
             # must overload
             if method['is_const']:
                 code += _tmpl_indent
-                code += f'.def({_method_prefix("__getitem__")} nb::overload_cast<{args_types}>(&{struct_name}::operator[], nb::const_))\n'
+                code += (
+                    f'.def({_method_prefix("__getitem__")}'
+                    f' nb::overload_cast<{args_types}>(&{struct_name}::operator[], nb::const_))\n'
+                )
             else:
                 val_type = method['return_type']
                 code += _tmpl_indent
                 code += f'.def({_method_prefix("__getitem__")} nb::overload_cast<{args_types}>(&{struct_name}::operator[]))\n'
                 code += _tmpl_indent
-                code += f'.def({_method_prefix("__setitem__")} []({struct_name} & self, {args_list}, const {val_type} value) {{ self[{args_names}] = value; }})\n'
+                code += (
+                    f'.def({_method_prefix("__setitem__")}'
+                    f' []({struct_name} & self, {args_list}, const {val_type} value) {{ self[{args_names}] = value; }})\n'
+                )
 
         elif fn_name == 'to_string':
             assert len(method['args']) == 0
