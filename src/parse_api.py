@@ -5,18 +5,30 @@ from clang.cindex import CursorKind, Type, TypeKind, AccessSpecifier
 BASIC_TYPES = set(['void', 'bool', 'int', 'char', 'double', 'float', 'int32_t', 'int64_t', 'size_t', 'va_list'])
 TYPES_BLACK_LIST = set([
     "ImGuiErrorLogCallback",
+    "ImFont",
+    "ImFontAtlas",
+    "ImDrawCmd",
+    "ImDrawList",
+    "ImGuiStorage",
+    "ImGuiContextHook",
+    "ImGuiNavItemData",
+    "ImGuiOldColumns",
+    "ImGuiViewportP",
+    "ImVector",
 ])
 
 
 def parse_cpp_sources():
     _DIR = os.path.dirname(os.path.abspath(__file__))
-    imgui_config = '<imconfig_user.h>'
     args = [
-        f"-DIMGUI_USER_CONFIG={imgui_config}",
+        # f"-DIMGUI_USER_CONFIG=<imconfig_user.h>",
         f"-I{_DIR}",
-        f"-I{os.path.abspath(_DIR + '/../third-party/fmt/include')}",
-        f"-I{os.path.abspath(_DIR + '/../third-party/nanobind/include')}",
+        f"-I{os.path.abspath(_DIR + '/../third-party/imgui')}",
+        # f"-I{os.path.abspath(_DIR + '/../third-party/fmt/include')}",
+        # f"-I{os.path.abspath(_DIR + '/../third-party/nanobind/include')}",
     ]
+    for arg in args:
+        print(arg)
 
     index = clang.cindex.Index.create()
     tu = index.parse('../third-party/imgui/imgui.cpp', args=args)
@@ -62,6 +74,42 @@ def find_api(node, export_api_names, api_dict):
             api_dict[node.spelling] = method
 
 
+def find_structs(node, white_list, results):
+    if white_list is not None and node.spelling not in white_list:
+        return
+    if node.kind == CursorKind.STRUCT_DECL:  # and node.spelling.startswith("Im"):
+
+        struct_name = node.spelling
+        results[struct_name] = dict(fields=[], constructors=[], methods=[])
+
+        # inspect children
+        for child in node.get_children():
+            # only public
+            if child.access_specifier != AccessSpecifier.PUBLIC:
+                continue
+
+            # field
+            if child.kind == CursorKind.FIELD_DECL:
+                field = dict(name=child.spelling, type=child.type.spelling)
+                results[struct_name]['fields'].append(field)
+            elif child.kind == CursorKind.CONSTRUCTOR:
+                constructor = dict(args=[])
+                for t in child.get_arguments():
+                    constructor['args'].append(dict(type=t.type.spelling, name=t.spelling))
+                results[struct_name]['constructors'].append(constructor)
+            elif child.kind == CursorKind.CXX_METHOD:
+                fn = child.spelling
+                method = dict(name=fn, args=[], return_type=child.type.get_result().spelling, is_const=child.is_const_method())
+                for t in child.get_arguments():
+                    type_name = ''
+                    for x in t.get_tokens():
+                        if x.spelling != t.spelling:
+                            type_name += ' ' + x.spelling
+                    type_name = type_name.strip()
+                    method['args'].append(dict(type=type_name, name=t.spelling, cursor=t))
+                results[struct_name]['methods'].append(method)
+
+
 def generate_binding_code():
     code = ''
     code += '#include "api.hpp"\n'
@@ -101,21 +149,29 @@ if __name__ == "__main__":
     api_dict = dict()
     for c in tu.cursor.get_children():
         find_api(c, imgui_api_names, api_dict)
-    
+
     # Collect all types used in api
     necessary_types = set()
     for _, method in api_dict.items():
+        names = type_name_without_decoration(method['return_type'])
         for arg in method['args']:
-            type_name = arg['type'].replace("const", "").replace("*", "").replace("&", "").strip()
-            for n in type_name_without_decoration(type_name):
-                if n in BASIC_TYPES:
-                    continue
-                if n in TYPES_BLACK_LIST:
-                    continue
-                necessary_types.add(n)
+            names += type_name_without_decoration(arg['type'])
+        for n in names:
+            if n in BASIC_TYPES:
+                continue
+            if n in TYPES_BLACK_LIST:
+                continue
+            necessary_types.add(n)
     for type_name in necessary_types:
         print(type_name)
     print(len(necessary_types))
+
+    # Get all structs
+    struct_dict = dict()
+    for c in tu.cursor.get_children():
+        find_structs(c, necessary_types, struct_dict)
+    for name in struct_dict:
+        print(name)
 
 # # generate code
 # code = generate_binding_code()

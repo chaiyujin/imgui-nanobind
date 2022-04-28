@@ -56,7 +56,7 @@ code = """#include "enums.hpp"
 
 namespace nb = nanobind;
 
-void imgui_def_enums(nb::module_ & m) {
+void imgui_def_enums_auto(nb::module_ & m) {
 
 """
 

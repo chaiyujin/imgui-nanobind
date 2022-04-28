@@ -2,7 +2,7 @@
 
 namespace nb = nanobind;
 
-void imgui_def_enums(nb::module_ & m) {
+void imgui_def_enums_auto(nb::module_ & m) {
 
     nb::enum_<ImGuiInputTextFlags_>(m, "ImGuiInputTextFlags")
         .value("NONE",                ImGuiInputTextFlags_None)

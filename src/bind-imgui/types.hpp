@@ -4,6 +4,7 @@
 #include <imgui_internal.h>
 
 void imgui_def_types(nanobind::module_ & m);
+void imgui_def_types_auto(nanobind::module_ & m);
 
 #define CLASS_CASTER(Value_)                                                                        \
     using Value = Value_;                                                                           \
