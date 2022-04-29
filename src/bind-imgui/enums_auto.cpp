@@ -401,12 +401,12 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("KeyPadEnter",        ImGuiKey_KeyPadEnter)
     ;
 
-    nb::enum_<ImGuiKeyModFlags_>(m, "ImGuiKeyModFlags")
-        .value("NONE",  ImGuiKeyModFlags_None)
-        .value("Ctrl",  ImGuiKeyModFlags_Ctrl)
-        .value("Shift", ImGuiKeyModFlags_Shift)
-        .value("Alt",   ImGuiKeyModFlags_Alt)
-        .value("Super", ImGuiKeyModFlags_Super)
+    nb::enum_<ImGuiModFlags_>(m, "ImGuiModFlags")
+        .value("NONE",  ImGuiModFlags_None)
+        .value("Ctrl",  ImGuiModFlags_Ctrl)
+        .value("Shift", ImGuiModFlags_Shift)
+        .value("Alt",   ImGuiModFlags_Alt)
+        .value("Super", ImGuiModFlags_Super)
     ;
 
     nb::enum_<ImGuiNavInput_>(m, "ImGuiNavInput")
@@ -671,6 +671,14 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Right",    ImDrawCornerFlags_Right)
     ;
 
+    nb::enum_<ImGuiKeyModFlags_>(m, "ImGuiKeyModFlags")
+        .value("NONE",  ImGuiKeyModFlags_None)
+        .value("Ctrl",  ImGuiKeyModFlags_Ctrl)
+        .value("Shift", ImGuiKeyModFlags_Shift)
+        .value("Alt",   ImGuiKeyModFlags_Alt)
+        .value("Super", ImGuiKeyModFlags_Super)
+    ;
+
     nb::enum_<ImGuiItemFlags_>(m, "ImGuiItemFlags")
         .value("NONE",                     ImGuiItemFlags_None)
         .value("NoTabStop",                ImGuiItemFlags_NoTabStop)
@@ -783,13 +791,13 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",     ImGuiInputSource_COUNT)
     ;
 
-    nb::enum_<ImGuiInputReadMode>(m, "ImGuiInputReadMode")
-        .value("Down",       ImGuiInputReadMode_Down)
-        .value("Pressed",    ImGuiInputReadMode_Pressed)
-        .value("Released",   ImGuiInputReadMode_Released)
-        .value("Repeat",     ImGuiInputReadMode_Repeat)
-        .value("RepeatSlow", ImGuiInputReadMode_RepeatSlow)
-        .value("RepeatFast", ImGuiInputReadMode_RepeatFast)
+    nb::enum_<ImGuiNavReadMode>(m, "ImGuiNavReadMode")
+        .value("Down",       ImGuiNavReadMode_Down)
+        .value("Pressed",    ImGuiNavReadMode_Pressed)
+        .value("Released",   ImGuiNavReadMode_Released)
+        .value("Repeat",     ImGuiNavReadMode_Repeat)
+        .value("RepeatSlow", ImGuiNavReadMode_RepeatSlow)
+        .value("RepeatFast", ImGuiNavReadMode_RepeatFast)
     ;
 
     nb::enum_<ImGuiActivateFlags_>(m, "ImGuiActivateFlags")

@@ -53,13 +53,23 @@ def main():
 
     imgui.impl_init(window)
 
+    is_open = False
+    v_float = 0.0
+    v_float2 = [0.0, 1.0]
     while not glfw.window_should_close(window):
         glfw.poll_events()
 
         imgui.impl_new_frame()
         imgui.new_frame()
 
-        imgui.demo()
+        # imgui.demo()
+        imgui.demo(is_open, 0, None)
+
+        imgui.Begin("haha", True)
+        imgui.Text("FUck you!")
+        imgui.SliderFloat("Value", v_float, -10.0, 10.0)
+        imgui.SliderFloat2("Value2", v_float2, -10.0, 10.0)
+        imgui.End()
 
         imgui.render()
         w, h = glfw.get_framebuffer_size(window)

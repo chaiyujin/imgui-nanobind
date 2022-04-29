@@ -4,7 +4,13 @@ from clang.cindex import CursorKind, Type, TypeKind, AccessSpecifier
 
 
 # WHITE_LIST = None
-WHITE_LIST = ["ImVec2", "ImVec4", "ImRect", "ImGuiIO", "ImGuiStyle"]  # , "ImFontAtlas", "ImFont"]
+WHITE_LIST = [
+    "ImGuiIO", "ImGuiStyle",
+    # "ImFontAtlas", "ImFont",
+    "ImGuiWindow", "ImGuiWindowSettings",
+    "ImGuiTabBar", "ImGuiSettingsHandler",
+    "ImGuiContext",
+]
 
 
 def find_structs(node, results):
@@ -23,7 +29,7 @@ def find_structs(node, results):
 
             # field
             if child.kind == CursorKind.FIELD_DECL:
-                field = dict(name=child.spelling, type=child.type.spelling)
+                field = dict(name=child.spelling, type=child.type.spelling, is_bitfield=child.is_bitfield())
                 results[struct_name]['fields'].append(field)
             elif child.kind == CursorKind.CONSTRUCTOR:
                 constructor = dict(args=[])
@@ -47,10 +53,10 @@ _DIR = os.path.dirname(os.path.abspath(__file__))
 all_structs = dict()
 imgui_config = '<imconfig_user.h>'
 args = [
-    f"-DIMGUI_USER_CONFIG={imgui_config}",
+    # f"-DIMGUI_USER_CONFIG={imgui_config}",
     f"-I{_DIR}",
-    f"-I{os.path.abspath(_DIR + '/../third-party/fmt/include')}",
-    f"-I{os.path.abspath(_DIR + '/../third-party/nanobind/include')}",
+    # f"-I{os.path.abspath(_DIR + '/../third-party/fmt/include')}",
+    # f"-I{os.path.abspath(_DIR + '/../third-party/nanobind/include')}",
 ]
 
 index = clang.cindex.Index.create()
@@ -79,6 +85,14 @@ def gen_struct_code(struct_name, children):
                 f'.def_property("{field["name"]}",'
                 f' []({struct_name} const & self) {{ return self.{field["name"]}; }},'
                 f' []({struct_name} & self, nb::str & value) {{ self.{field["name"]} = value.c_str(); }} )\n'
+            )
+        elif field['is_bitfield']:
+            # > bitfield work around
+            code += _tmpl_indent
+            code += (
+                f'.def_property("{field["name"]}",'
+                f' []({struct_name} const & self) -> {field["type"]} {{ return self.{field["name"]}; }},'
+                f' []({struct_name} & self, {field["type"]} const & value) {{ self.{field["name"]} = value; }} )\n'
             )
 
         elif field['type'].find("*") >= 0:
@@ -163,7 +177,7 @@ def gen_struct_code(struct_name, children):
             code += "))\n"
 
     code += _tmpl_end
-    print(code, end='')
+    # print(code, end='')
     return code
 
 
@@ -172,7 +186,7 @@ code = """#include "types.hpp"
 
 namespace nb = nanobind;
 
-void imgui_def_types(nb::module_ & m) {
+void imgui_def_types_auto(nb::module_ & m) {
 
 """
 

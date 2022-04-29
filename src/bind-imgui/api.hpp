@@ -3,4 +3,4 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-void imgui_def_api(nanobind::module_ & m);
+void imgui_def_api_auto(nanobind::module_ & m);

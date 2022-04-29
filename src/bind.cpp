@@ -8,7 +8,6 @@
 #include "bind-imgui/bind-imgui.hpp"
 #include "bind-imgui/raw_ptr.hpp"
 
-
 namespace nb = nanobind;
 
 // * -------------------------------------------------------------------------------------------------------------- * //
@@ -128,9 +127,17 @@ void naive_demo_bind(nanobind::module_ & m) {
         ImGui::Render();
     });
 
-    m.def("demo", []() {
+    m.def("demo", [](bool * p_open, float * p_float, ImVec2 * p_val) {
+        printf("float is %f\n", *p_float);
+        *p_float = 100;
+        printf("float is %f\n", *p_float);
+        if (p_val) {
+            p_val->x = 1000;
+        }
+        static bool open = false;
+        p_open = &open;
         ImGui::ShowDemoWindow();
-    });
+    }, nb::arg("p_open"), nb::arg("p_float"), nb::arg("p_val").none(true));
 
     m.def("impl_init", [](PtrWrapper<GLFWwindow> window) {
         ImGui_ImplGlfw_InitForOpenGL(window.ptr, true);
