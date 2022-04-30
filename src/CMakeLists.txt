@@ -47,6 +47,7 @@ nanobind_add_module(imgui ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES}
     bind-imgui/types.cpp
     bind-imgui/types_auto.cpp
     bind-imgui/types_no_methods.cpp
+    bind-imgui/api.cpp
     bind-imgui/api_auto.cpp
 )
 target_include_directories(imgui PRIVATE ${IMGUI_INC_DIRS} ${IMGUI_IMPL_INC_DIRS} ${PROJECT_SOURCE_DIR})

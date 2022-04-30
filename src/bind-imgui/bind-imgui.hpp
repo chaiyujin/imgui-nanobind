@@ -8,5 +8,6 @@ void imgui_bind_all(nanobind::module_ & m) {
     imgui_def_types(m);
     imgui_def_types_auto(m);
     imgui_def_types_no_methods(m);
+    imgui_def_api(m);
     imgui_def_api_auto(m);
 }
