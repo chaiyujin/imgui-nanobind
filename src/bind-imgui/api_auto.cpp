@@ -1,12 +1,18 @@
 #include "api.hpp"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/tensor.h>
+#include <optional>
 #include "../array.h"
+#include "../optional.h"
 
 namespace nb = nanobind;
 
 void imgui_def_api_auto(nb::module_ & m) {
-    m.def("DestroyContext", [](ImGuiContext * _ctx) -> void { ImGui::DestroyContext(_ctx); } , nb::arg("_ctx")=NULL);
+    m.def("DestroyContext", [](ImGuiContext * _ctx) -> void {
+        ImGui::DestroyContext(_ctx);
+        printf("destroy context: %u\n", (intptr_t)_ctx);
+    } , nb::arg("_ctx")=NULL);
     m.def("GetCurrentContext", []() -> ImGuiContext * { return ImGui::GetCurrentContext(); } );
     m.def("SetCurrentContext", [](ImGuiContext * _ctx) -> void { ImGui::SetCurrentContext(_ctx); } , nb::arg("_ctx"));
     m.def("GetIO", []() -> ImGuiIO & { return ImGui::GetIO(); } );
@@ -27,7 +33,6 @@ void imgui_def_api_auto(nb::module_ & m) {
     m.def("StyleColorsDark", [](ImGuiStyle * _dst) -> void { ImGui::StyleColorsDark(_dst); } , nb::arg("_dst")=NULL);
     m.def("StyleColorsLight", [](ImGuiStyle * _dst) -> void { ImGui::StyleColorsLight(_dst); } , nb::arg("_dst")=NULL);
     m.def("StyleColorsClassic", [](ImGuiStyle * _dst) -> void { ImGui::StyleColorsClassic(_dst); } , nb::arg("_dst")=NULL);
-    m.def("Begin", [](nb::str & _name, bool * _p_open, ImGuiWindowFlags _flags) -> bool { return ImGui::Begin(_name.c_str(), _p_open, _flags); } , nb::arg("_name"), nb::arg("_p_open")=NULL, nb::arg("_flags")=0);
     m.def("End", []() -> void { ImGui::End(); } );
     m.def("BeginChild", [](nb::str & _str_id, const ImVec2 & _size, bool _border, ImGuiWindowFlags _flags) -> bool { return ImGui::BeginChild(_str_id.c_str(), _size, _border, _flags); } , nb::arg("_str_id"), nb::arg("_size")=ImVec2 ( 0 , 0 ), nb::arg("_border")=false, nb::arg("_flags")=0);
     m.def("EndChild", []() -> void { ImGui::EndChild(); } );
@@ -122,7 +127,6 @@ void imgui_def_api_auto(nb::module_ & m) {
     m.def("SmallButton", [](nb::str & _label) -> bool { return ImGui::SmallButton(_label.c_str()); } , nb::arg("_label"));
     m.def("InvisibleButton", [](nb::str & _str_id, const ImVec2 & _size, ImGuiButtonFlags _flags) -> bool { return ImGui::InvisibleButton(_str_id.c_str(), _size, _flags); } , nb::arg("_str_id"), nb::arg("_size"), nb::arg("_flags")=0);
     m.def("ArrowButton", [](nb::str & _str_id, ImGuiDir _dir) -> bool { return ImGui::ArrowButton(_str_id.c_str(), _dir); } , nb::arg("_str_id"), nb::arg("_dir"));
-    m.def("Checkbox", [](nb::str & _label, bool * _v) -> bool { return ImGui::Checkbox(_label.c_str(), _v); } , nb::arg("_label"), nb::arg("_v"));
     m.def("CheckboxFlags", [](nb::str & _label, int * _flags, int _flags_value) -> bool { return ImGui::CheckboxFlags(_label.c_str(), _flags, _flags_value); } , nb::arg("_label"), nb::arg("_flags"), nb::arg("_flags_value"));
     m.def("RadioButton", [](nb::str & _label, bool _active) -> bool { return ImGui::RadioButton(_label.c_str(), _active); } , nb::arg("_label"), nb::arg("_active"));
     m.def("ProgressBar", [](float _fraction, const ImVec2 & _size_arg, nb::str & _overlay) -> void { ImGui::ProgressBar(_fraction, _size_arg, _overlay.c_str()); } , nb::arg("_fraction"), nb::arg("_size_arg")=ImVec2 ( - FLT_MIN , 0 ), nb::arg("_overlay")=NULL);
@@ -291,23 +295,31 @@ void imgui_def_api_auto(nb::module_ & m) {
 
 
     m.def("SliderFloat",
-        [](nb::str & _label, float * _v, float _v_min, float _v_max, nb::str & _format, ImGuiSliderFlags _flags) -> bool {
-            return ImGui::SliderFloat(_label.c_str(), _v, _v_min, _v_max, _format.c_str(), _flags);
+        [](nb::str & _label, nb::tensor<nb::numpy, float, nb::shape<1>> & _v, float _v_min, float _v_max, nb::str & _format, ImGuiSliderFlags _flags) -> bool {
+            return ImGui::SliderFloat(_label.c_str(), (float *)_v.data(), _v_min, _v_max, _format.c_str(), _flags);
         },
         nb::arg("_label"), nb::arg("_v"), nb::arg("_v_min"), nb::arg("_v_max"), nb::arg("_format")="%.3f", nb::arg("_flags")=0
     );
 
     m.def("SliderFloat2",
-        [](nb::str & _label, std::vector<double> & _v, float _v_min, float _v_max, nb::str & _format, ImGuiSliderFlags _flags) -> bool {
-            std::array<float, 2> v;
-            v[0] = _v[0];
-            v[1] = _v[1];
-            bool ret = ImGui::SliderFloat2(_label.c_str(), v.data(), _v_min, _v_max, _format.c_str(), _flags);
-            _v[0] = v[0];
-            _v[1] = v[1];
+        [](nb::str & _label, nb::tensor<nb::numpy, float, nb::shape<2>> & _v, float _v_min, float _v_max, nb::str & _format, ImGuiSliderFlags _flags) -> bool {
+            bool ret = ImGui::SliderFloat2(_label.c_str(), (float *)_v.data(), _v_min, _v_max, _format.c_str(), _flags);
             return ret;
         },
         nb::arg("_label"), nb::arg("_v"), nb::arg("_v_min"), nb::arg("_v_max"), nb::arg("_format")="%.3f", nb::arg("_flags")=0,
         nb::rv_policy::automatic_reference
     );
+    m.def("Begin", [](nb::str & _name, nb::tensor<nb::numpy, uint8_t, nb::shape<1>> & _p_open, ImGuiWindowFlags _flags) -> bool {
+        return ImGui::Begin(_name.c_str(), (bool*)_p_open.data(), _flags);
+    } , nb::arg("_name"), nb::arg("_p_open"), nb::arg("_flags")=0);
+    // m.def("Checkbox", [](nb::str & _label,nb::tensor<nb::numpy, uint8_t, nb::shape<1>> & _v) -> bool {
+    //     return ImGui::Checkbox(_label.c_str(), (bool*)_v.data());
+    // } , nb::arg("_label"), nb::arg("_v"));
+
+    m.def("Checkbox", [](nb::str & _label, std::optional<nb::tensor<nb::numpy, uint8_t, nb::shape<1>>> _v) -> bool {
+        if (!_v) {
+            return false;
+        }
+        return ImGui::Checkbox(_label.c_str(), (bool*)_v->data());
+    } , nb::arg("_label"), nb::arg("_v").none());
 }

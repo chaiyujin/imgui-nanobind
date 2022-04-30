@@ -1,5 +1,6 @@
 import glfw
 import ctypes
+import numpy as np
 import imgui
 from imgui import ImVec2, ImVec4, ImRect
 from OpenGL import GL as gl
@@ -42,20 +43,22 @@ def main():
     print(rect.ToVec4())
 
     imgui_ctx = imgui.create_context()
+    imgui.SetCurrentContext(imgui_ctx)
     io = imgui.get_IO()
     print(io.IniFilename)
     io.IniFilename = "imgui_new.ini"
 
-    imgui.style_colors_dark()
+    imgui.style_colors_dark(None)
 
     imgui.test_char_ptr("Hellow!a")
     print(int(imgui.ImGuiItemFlags.ReadOnly))
 
     imgui.impl_init(window)
 
-    is_open = False
-    v_float = 0.0
-    v_float2 = [0.0, 1.0]
+    is_open = np.asarray([0], dtype=np.uint8)
+    # is_open = True
+    v_float = np.asarray([0.0], dtype=np.float32)
+    v_float2 = np.asarray([0.0, 1.0], dtype=np.float32)
     while not glfw.window_should_close(window):
         glfw.poll_events()
 
@@ -63,13 +66,18 @@ def main():
         imgui.new_frame()
 
         # imgui.demo()
-        imgui.demo(is_open, 0, None)
-
-        imgui.Begin("haha", True)
-        imgui.Text("FUck you!")
+        # imgui.demo(is_open)
+        print(is_open)
+        imgui.Begin("haha", np.asarray([1], dtype=np.uint8))
+        imgui.Text("Hello World!")
         imgui.SliderFloat("Value", v_float, -10.0, 10.0)
         imgui.SliderFloat2("Value2", v_float2, -10.0, 10.0)
+        imgui.Checkbox("open", is_open)
+        imgui.Checkbox("open2", None)
         imgui.End()
+
+        # imgui.Begin("fuck", is_open)
+        # imgui.End()
 
         imgui.render()
         w, h = glfw.get_framebuffer_size(window)
@@ -82,7 +90,8 @@ def main():
 
     print(io.IniFilename)
     imgui.impl_shutdown()
-    imgui.destroy_context(imgui_ctx)
+    # imgui.destroy_context(imgui_ctx)
+    imgui.DestroyContext(imgui_ctx)
     glfw.terminate()
 
 

@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/tensor.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -108,17 +109,20 @@ void naive_demo_bind(nanobind::module_ & m) {
 
     m.def("create_context", []() {
         IMGUI_CHECKVERSION();
-        return PtrWrapper<ImGuiContext>{ImGui::CreateContext()};
-    }, nb::rv_policy::move);
+        auto * ptr = ImGui::CreateContext();
+        printf("creat context: %u\n", (intptr_t)ptr);
+        return ptr;
+        // return PtrWrapper<ImGuiContext>{ImGui::CreateContext()};
+    }, nb::rv_policy::automatic_reference);
 
-    m.def("destroy_context", [](PtrWrapper<ImGuiContext> context) {
-        ImGui::DestroyContext(context.ptr);
-        printf("Destroy! %lu\n", (intptr_t)context.ptr);
-    }, nb::arg("context") = PtrWrapper<ImGuiContext>{0});
+    // m.def("destroy_context", [](PtrWrapper<ImGuiContext> context) {
+    //     ImGui::DestroyContext(context.ptr);
+    //     printf("Destroy! %lu\n", (intptr_t)context.ptr);
+    // }, nb::arg("context") = PtrWrapper<ImGuiContext>{0});
 
-    m.def("style_colors_dark", []() {
+    m.def("style_colors_dark", [](ImGuiContext * _ptr) {
         ImGui::StyleColorsDark();
-    });
+    }, nb::arg("_ptr").none());
 
     m.def("new_frame", []() {
         ImGui::NewFrame();
@@ -127,17 +131,9 @@ void naive_demo_bind(nanobind::module_ & m) {
         ImGui::Render();
     });
 
-    m.def("demo", [](bool * p_open, float * p_float, ImVec2 * p_val) {
-        printf("float is %f\n", *p_float);
-        *p_float = 100;
-        printf("float is %f\n", *p_float);
-        if (p_val) {
-            p_val->x = 1000;
-        }
-        static bool open = false;
-        p_open = &open;
-        ImGui::ShowDemoWindow();
-    }, nb::arg("p_open"), nb::arg("p_float"), nb::arg("p_val").none(true));
+    m.def("demo", [](nb::tensor<nb::numpy, bool, nb::shape<1>> & p_open) {
+        ImGui::ShowDemoWindow((bool*)p_open.data());
+    }, nb::arg("p_open"));
 
     m.def("impl_init", [](PtrWrapper<GLFWwindow> window) {
         ImGui_ImplGlfw_InitForOpenGL(window.ptr, true);
