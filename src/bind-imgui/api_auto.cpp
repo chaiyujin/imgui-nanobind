@@ -1,10 +1,4 @@
 #include "api.hpp"
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/tensor.h>
-#include <optional>
-#include "../array.h"
-#include "../optional.h"
 
 namespace nb = nanobind;
 
@@ -316,7 +310,7 @@ void imgui_def_api_auto(nb::module_ & m) {
     //     return ImGui::Checkbox(_label.c_str(), (bool*)_v.data());
     // } , nb::arg("_label"), nb::arg("_v"));
 
-    m.def("Checkbox", [](nb::str & _label, std::optional<nb::tensor<nb::numpy, uint8_t, nb::shape<1>>> _v) -> bool {
+    m.def("Checkbox", [](nb::str & _label, DataHolder<bool> _v) -> bool {
         if (!_v) {
             return false;
         }
