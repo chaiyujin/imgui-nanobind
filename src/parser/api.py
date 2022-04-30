@@ -1,7 +1,7 @@
 import os
 import clang.cindex
 from clang.cindex import CursorKind, Type, TypeKind, AccessSpecifier
-from .utils import parse_imgui_cpp_sources, type_names_without_decorations, Method, Argument
+from .utils import parse_imgui_cpp_sources, snake_style, type_names_without_decorations, Method, Argument
 
 BASIC_TYPES = set(['void', 'bool', 'int', 'char', 'double', 'float', 'int32_t', 'int64_t', 'size_t', 'va_list'])
 NUMBER_TYPES = set(['int', 'bool', 'float', 'double', 'size_t'])
@@ -80,7 +80,7 @@ def generate_api_binding_code(api_dict):
             return None
 
         # start
-        part += f'm.def(\"{name}\", []('
+        part += f'm.def(\"{snake_style(name)}\", []('
         # args
         for i, arg in enumerate(method.args):
             # change name

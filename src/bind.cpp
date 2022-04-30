@@ -14,7 +14,7 @@ struct GLFWwindow {};  // Opaque
 CYTHON_PTR_CASTER(GLFWwindow);  // Custom caster
 
 void work_around_bind(nanobind::module_ & m) {
-    m.def("CreateContext", []() -> ImGuiContext * {
+    m.def("create_context", []() -> ImGuiContext * {
         auto * ptr = ImGui::CreateContext();
         // printf("creat context: %u\n", (intptr_t)ptr);
         return ptr;

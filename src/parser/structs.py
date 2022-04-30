@@ -1,6 +1,7 @@
 import os
 import clang.cindex
 from clang.cindex import CursorKind, Type, TypeKind, AccessSpecifier
+from .utils import snake_style
 
 
 # WHITE_LIST = None
@@ -67,7 +68,7 @@ for c in tu.cursor.get_children():
 
 def gen_struct_code(struct_name, children):
     _tmpl_begin  = '    nb::class_<{0}>(m, "{0}")\n'
-    _tmpl_field  = '        .def_readwrite("{1}", &{0}::{1})\n'
+    _tmpl_field  = '        .def_readwrite("{1}", &{0}::{2})\n'
     _tmpl_indent = '        '
     _tmpl_end    = '    ;\n\n'
 
@@ -82,7 +83,7 @@ def gen_struct_code(struct_name, children):
             # > const char *
             code += _tmpl_indent
             code += (
-                f'.def_property("{field["name"]}",'
+                f'.def_property("{snake_style(field["name"])}",'
                 f' []({struct_name} const & self) {{ return self.{field["name"]}; }},'
                 f' []({struct_name} & self, nb::str & value) {{ self.{field["name"]} = value.c_str(); }} )\n'
             )
@@ -90,7 +91,7 @@ def gen_struct_code(struct_name, children):
             # > bitfield work around
             code += _tmpl_indent
             code += (
-                f'.def_property("{field["name"]}",'
+                f'.def_property("{snake_style(field["name"])}",'
                 f' []({struct_name} const & self) -> {field["type"]} {{ return self.{field["name"]}; }},'
                 f' []({struct_name} & self, {field["type"]} const & value) {{ self.{field["name"]} = value; }} )\n'
             )
@@ -102,7 +103,7 @@ def gen_struct_code(struct_name, children):
             # > array, ignore
             continue
         else:
-            code += _tmpl_field.format(struct_name, field['name'])
+            code += _tmpl_field.format(struct_name, snake_style(field["name"]), field["name"])
 
     # * ----------------------------------------------- constructors ----------------------------------------------- * #
 
@@ -123,10 +124,10 @@ def gen_struct_code(struct_name, children):
         if name not in count_method:
             count_method[name] = 0
         count_method[name] += 1
-        max_name_len = max(max_name_len, len(name))
-    
+        max_name_len = max(max_name_len, len(snake_style(name)))
+
     def _method_prefix(n):
-        return '"' + n + '",' + ' ' * (max_name_len - len(n))
+        return '"' + snake_style(n) + '",' + ' ' * (max_name_len - len(snake_style(n)))
 
     for method in children['methods']:
         fn_name = method['name']

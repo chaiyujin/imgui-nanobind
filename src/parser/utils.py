@@ -1,6 +1,7 @@
 from typing import List
 
 import os
+import humps
 import clang.cindex
 from clang.cindex import Cursor, CursorKind, Type, TypeKind, AccessSpecifier, TranslationUnit
 
@@ -39,6 +40,10 @@ def type_names_without_decorations(name):
         t1 = t1.strip()
         return t0, t1
     return (type_name, )
+
+
+def snake_style(name: str):
+    return humps.decamelize(name).lower()
 
 
 class Argument(object):

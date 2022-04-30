@@ -4,7 +4,7 @@ namespace nb = nanobind;
 
 void imgui_def_api(nb::module_ & m) {
 
-    m.def("Image",
+    m.def("image",
         [](int user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1,
            const ImVec4& tint_col, const ImVec4& border_col) -> void {
             return ImGui::Image((ImTextureID)(intptr_t)user_texture_id, size, uv0, uv1, tint_col, border_col);
@@ -17,7 +17,7 @@ void imgui_def_api(nb::module_ & m) {
         nb::arg("border_col") = ImVec4(0, 0, 0, 0)
     );
 
-    m.def("ImageButton",
+    m.def("image_button",
         [](int user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1,
            int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col) -> bool {
             return ImGui::ImageButton((ImTextureID)(intptr_t)user_texture_id, size, uv0, uv1, frame_padding, bg_col, tint_col);
