@@ -1,2 +1,2 @@
-from .import extension
+from . import utils
 from .bind.imgui import *
