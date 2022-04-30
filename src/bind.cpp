@@ -36,40 +36,13 @@ void test_key_callback(nanobind::module_ & m) {
     m.def("set_key_callback", &set_key_callback);
 }
 
-void naive_demo_bind(nanobind::module_ & m) {
-
-    m.def("test_char_ptr", [](nb::str & str) {
-        printf("%s\n", str.c_str());
-    });
-
-    m.def("get_IO", &ImGui::GetIO, nb::rv_policy::reference);
-    m.def("get_style", &ImGui::GetStyle, nb::rv_policy::reference);
-
-    nb::class_<CythonPtr<ImGuiContext>>(m, "ImGuiContextCythonPtr");
-
+void work_around_bind(nanobind::module_ & m) {
     m.def("create_context", []() {
         IMGUI_CHECKVERSION();
         auto * ptr = ImGui::CreateContext();
         printf("creat context: %u\n", (intptr_t)ptr);
         return ptr;
-        // return CythonPtr<ImGuiContext>{ImGui::CreateContext()};
     }, nb::rv_policy::automatic_reference);
-
-    // m.def("destroy_context", [](CythonPtr<ImGuiContext> context) {
-    //     ImGui::DestroyContext(context.ptr);
-    //     printf("Destroy! %lu\n", (intptr_t)context.ptr);
-    // }, nb::arg("context") = CythonPtr<ImGuiContext>{0});
-
-    m.def("style_colors_dark", [](ImGuiContext * _ptr) {
-        ImGui::StyleColorsDark();
-    }, nb::arg("_ptr").none());
-
-    m.def("new_frame", []() {
-        ImGui::NewFrame();
-    });
-    m.def("render", []() {
-        ImGui::Render();
-    });
 
     m.def("demo", [](nb::tensor<nb::numpy, bool, nb::shape<1>> & p_open) {
         ImGui::ShowDemoWindow((bool*)p_open.data());
@@ -87,8 +60,8 @@ void naive_demo_bind(nanobind::module_ & m) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
     });
-    m.def("impl_render", []() {
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    m.def("impl_render", [](ImDrawData * _draw_data) {
+        ImGui_ImplOpenGL3_RenderDrawData(_draw_data);
     });
 }
 
@@ -97,5 +70,5 @@ NB_MODULE(imgui, m) {
 
     test_key_callback(m);
 
-    naive_demo_bind(m);
+    work_around_bind(m);
 }

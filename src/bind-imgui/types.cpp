@@ -1,5 +1,4 @@
 #include "types.hpp"
-#include <nanobind/stl/string.h>
 
 namespace nb = nanobind;
 

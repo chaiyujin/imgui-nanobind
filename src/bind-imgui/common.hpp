@@ -8,9 +8,13 @@
 #include "stl/array.h"
 #include "stl/optional.h"
 
-template <typename T, size_t N=1>
-using DataHolder = std::optional<
+template <typename T, size_t N>
+using IMBIND_Array = std::optional<
     nanobind::tensor<nanobind::numpy, T, nanobind::shape<N>>
+>;
+template <typename T>
+using IMBIND_Data = std::optional<
+    nanobind::tensor<nanobind::numpy, T>
 >;
 
 // * -------------------------------------------------------------------------------------------------------------- * //
