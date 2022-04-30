@@ -10,37 +10,13 @@
 
 namespace nb = nanobind;
 
-// * -------------------------------------------------------------------------------------------------------------- * //
-// *                                          GLFWwindow Pointer Conversion                                         * //
-// * -------------------------------------------------------------------------------------------------------------- * //
-
 struct GLFWwindow {};  // Opaque
 CYTHON_PTR_CASTER(GLFWwindow);  // Custom caster
 
-// * -------------------------------------------------------------------------------------------------------------- * //
-// *                                                      Test                                                      * //
-// * -------------------------------------------------------------------------------------------------------------- * //
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    printf("press %d\n", scancode);
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-}
-
-void set_key_callback(CythonPtr<GLFWwindow> window) {
-    glfwSetKeyCallback(window.ptr, key_callback);
-}
-
-void test_key_callback(nanobind::module_ & m) {
-    m.def("set_key_callback", &set_key_callback);
-}
-
 void work_around_bind(nanobind::module_ & m) {
-    m.def("create_context", []() {
-        IMGUI_CHECKVERSION();
+    m.def("CreateContext", []() -> ImGuiContext * {
         auto * ptr = ImGui::CreateContext();
-        printf("creat context: %u\n", (intptr_t)ptr);
+        // printf("creat context: %u\n", (intptr_t)ptr);
         return ptr;
     }, nb::rv_policy::automatic_reference);
 
@@ -67,8 +43,5 @@ void work_around_bind(nanobind::module_ & m) {
 
 NB_MODULE(imgui, m) {
     imgui_bind_all(m);
-
-    test_key_callback(m);
-
     work_around_bind(m);
 }
