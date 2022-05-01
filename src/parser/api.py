@@ -96,7 +96,10 @@ def generate_api_binding_code(api_dict):
             # special
             base_type_name = type_names_without_decorations(type_name)[0]
             if type_name in ['const char *', 'char const *']:
-                part += f'nb::str & {arg.name}'
+                if arg.default_value not in ["NULL", "nullptr"]:
+                    part += f'nb::str & {arg.name}'
+                else:
+                    part += f'std::optional<std::string> {arg.name}'
             elif type_name.find("*") >= 0 and base_type_name in NUMBER_TYPES:
                 # print(type_name, name)
                 part += f'IMBIND_Data<{base_type_name}> {arg.name}'
@@ -122,12 +125,15 @@ def generate_api_binding_code(api_dict):
             # special
             base_type_name = type_names_without_decorations(type_name)[0]
             if type_name in ['const char *', 'char const *']:
-                part += f'{arg.name}.c_str()'
+                if arg.default_value not in ["NULL", "nullptr"]:
+                    part += f'{arg.name}.c_str()'
+                else:
+                    part += f'(({arg.name}.has_value()) ? {arg.name}.value().c_str(): nullptr)'
             elif type_name.find("*") >= 0 and base_type_name in NUMBER_TYPES:
-                part += f'({base_type_name}*){arg.name}.value().data()'
+                part += f'(({arg.name}.has_value()) ? ({base_type_name}*){arg.name}.value().data(): nullptr)'
             elif type_name.find("[") >= 0 and base_type_name in NUMBER_TYPES:
                 size = int(type_name.split('[')[1].replace(']', '').strip())
-                part += f'({base_type_name}*){arg.name}.value().data()'
+                part += f'(({arg.name}.has_value()) ? ({base_type_name}*){arg.name}.value().data(): nullptr)'
             else:
                 part += f'{arg.name}'
             if i + 1 < len(method.args):

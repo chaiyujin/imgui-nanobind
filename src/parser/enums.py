@@ -22,16 +22,23 @@ def insert_if_valid_enum(node, results):
 
 def find_all_enums():
     all_enums = dict()
-    tu = parse_imgui_cpp_sources('imgui_internal.h')  # imgui.h is included
+    tu = parse_imgui_cpp_sources('imgui.cpp')  # imgui.h is included
     for c in tu.cursor.get_children():
-        insert_if_valid_enum(c, all_enums)
+        if c.spelling == "ImGui":
+            for k in c.get_children():
+                insert_if_valid_enum(k, all_enums)
+        else:
+            insert_if_valid_enum(c, all_enums)
+    for enum in sorted(list(all_enums.keys())):
+        print(enum)
+    print(len(all_enums), "enums")
     return all_enums
 
 
 def generate_code_enums(all_enums):
 
     def _gen_code(enum, values):
-        _tmpl_enum_begin = '    nb::enum_<{}>(m, "{}")\n'
+        _tmpl_enum_begin = '    nb::enum_<{}>(m, "{}", nb::is_arithmetic())\n'
         _tmpl_enum_value = '        .value("{}", {}{})\n'
         _tmpl_enum_end   = '    ;\n\n'
 

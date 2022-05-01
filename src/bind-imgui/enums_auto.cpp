@@ -4,7 +4,40 @@ namespace nb = nanobind;
 
 void imgui_def_enums_auto(nb::module_ & m) {
 
-    nb::enum_<ImGuiInputTextFlags_>(m, "ImGuiInputTextFlags")
+    nb::enum_<ImGuiWindowFlags_>(m, "ImGuiWindowFlags", nb::is_arithmetic())
+        .value("NONE",                      ImGuiWindowFlags_None)
+        .value("NoTitleBar",                ImGuiWindowFlags_NoTitleBar)
+        .value("NoResize",                  ImGuiWindowFlags_NoResize)
+        .value("NoMove",                    ImGuiWindowFlags_NoMove)
+        .value("NoScrollbar",               ImGuiWindowFlags_NoScrollbar)
+        .value("NoScrollWithMouse",         ImGuiWindowFlags_NoScrollWithMouse)
+        .value("NoCollapse",                ImGuiWindowFlags_NoCollapse)
+        .value("AlwaysAutoResize",          ImGuiWindowFlags_AlwaysAutoResize)
+        .value("NoBackground",              ImGuiWindowFlags_NoBackground)
+        .value("NoSavedSettings",           ImGuiWindowFlags_NoSavedSettings)
+        .value("NoMouseInputs",             ImGuiWindowFlags_NoMouseInputs)
+        .value("MenuBar",                   ImGuiWindowFlags_MenuBar)
+        .value("HorizontalScrollbar",       ImGuiWindowFlags_HorizontalScrollbar)
+        .value("NoFocusOnAppearing",        ImGuiWindowFlags_NoFocusOnAppearing)
+        .value("NoBringToFrontOnFocus",     ImGuiWindowFlags_NoBringToFrontOnFocus)
+        .value("AlwaysVerticalScrollbar",   ImGuiWindowFlags_AlwaysVerticalScrollbar)
+        .value("AlwaysHorizontalScrollbar", ImGuiWindowFlags_AlwaysHorizontalScrollbar)
+        .value("AlwaysUseWindowPadding",    ImGuiWindowFlags_AlwaysUseWindowPadding)
+        .value("NoNavInputs",               ImGuiWindowFlags_NoNavInputs)
+        .value("NoNavFocus",                ImGuiWindowFlags_NoNavFocus)
+        .value("UnsavedDocument",           ImGuiWindowFlags_UnsavedDocument)
+        .value("NoNav",                     ImGuiWindowFlags_NoNav)
+        .value("NoDecoration",              ImGuiWindowFlags_NoDecoration)
+        .value("NoInputs",                  ImGuiWindowFlags_NoInputs)
+        .value("NavFlattened",              ImGuiWindowFlags_NavFlattened)
+        .value("ChildWindow",               ImGuiWindowFlags_ChildWindow)
+        .value("Tooltip",                   ImGuiWindowFlags_Tooltip)
+        .value("Popup",                     ImGuiWindowFlags_Popup)
+        .value("Modal",                     ImGuiWindowFlags_Modal)
+        .value("ChildMenu",                 ImGuiWindowFlags_ChildMenu)
+    ;
+
+    nb::enum_<ImGuiInputTextFlags_>(m, "ImGuiInputTextFlags", nb::is_arithmetic())
         .value("NONE",                ImGuiInputTextFlags_None)
         .value("CharsDecimal",        ImGuiInputTextFlags_CharsDecimal)
         .value("CharsHexadecimal",    ImGuiInputTextFlags_CharsHexadecimal)
@@ -29,7 +62,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("AlwaysInsertMode",    ImGuiInputTextFlags_AlwaysInsertMode)
     ;
 
-    nb::enum_<ImGuiTreeNodeFlags_>(m, "ImGuiTreeNodeFlags")
+    nb::enum_<ImGuiTreeNodeFlags_>(m, "ImGuiTreeNodeFlags", nb::is_arithmetic())
         .value("NONE",                 ImGuiTreeNodeFlags_None)
         .value("Selected",             ImGuiTreeNodeFlags_Selected)
         .value("Framed",               ImGuiTreeNodeFlags_Framed)
@@ -48,7 +81,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("CollapsingHeader",     ImGuiTreeNodeFlags_CollapsingHeader)
     ;
 
-    nb::enum_<ImGuiPopupFlags_>(m, "ImGuiPopupFlags")
+    nb::enum_<ImGuiPopupFlags_>(m, "ImGuiPopupFlags", nb::is_arithmetic())
         .value("NONE",                    ImGuiPopupFlags_None)
         .value("MouseButtonLeft",         ImGuiPopupFlags_MouseButtonLeft)
         .value("MouseButtonRight",        ImGuiPopupFlags_MouseButtonRight)
@@ -62,7 +95,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("AnyPopup",                ImGuiPopupFlags_AnyPopup)
     ;
 
-    nb::enum_<ImGuiSelectableFlags_>(m, "ImGuiSelectableFlags")
+    nb::enum_<ImGuiSelectableFlags_>(m, "ImGuiSelectableFlags", nb::is_arithmetic())
         .value("NONE",             ImGuiSelectableFlags_None)
         .value("DontClosePopups",  ImGuiSelectableFlags_DontClosePopups)
         .value("SpanAllColumns",   ImGuiSelectableFlags_SpanAllColumns)
@@ -71,7 +104,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("AllowItemOverlap", ImGuiSelectableFlags_AllowItemOverlap)
     ;
 
-    nb::enum_<ImGuiComboFlags_>(m, "ImGuiComboFlags")
+    nb::enum_<ImGuiComboFlags_>(m, "ImGuiComboFlags", nb::is_arithmetic())
         .value("NONE",           ImGuiComboFlags_None)
         .value("PopupAlignLeft", ImGuiComboFlags_PopupAlignLeft)
         .value("HeightSmall",    ImGuiComboFlags_HeightSmall)
@@ -83,7 +116,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("HeightMask_",    ImGuiComboFlags_HeightMask_)
     ;
 
-    nb::enum_<ImGuiTabBarFlags_>(m, "ImGuiTabBarFlags")
+    nb::enum_<ImGuiTabBarFlags_>(m, "ImGuiTabBarFlags", nb::is_arithmetic())
         .value("NONE",                         ImGuiTabBarFlags_None)
         .value("Reorderable",                  ImGuiTabBarFlags_Reorderable)
         .value("AutoSelectNewTabs",            ImGuiTabBarFlags_AutoSelectNewTabs)
@@ -97,7 +130,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("FittingPolicyDefault_",        ImGuiTabBarFlags_FittingPolicyDefault_)
     ;
 
-    nb::enum_<ImGuiTabItemFlags_>(m, "ImGuiTabItemFlags")
+    nb::enum_<ImGuiTabItemFlags_>(m, "ImGuiTabItemFlags", nb::is_arithmetic())
         .value("NONE",                         ImGuiTabItemFlags_None)
         .value("UnsavedDocument",              ImGuiTabItemFlags_UnsavedDocument)
         .value("SetSelected",                  ImGuiTabItemFlags_SetSelected)
@@ -109,7 +142,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Trailing",                     ImGuiTabItemFlags_Trailing)
     ;
 
-    nb::enum_<ImGuiTableFlags_>(m, "ImGuiTableFlags")
+    nb::enum_<ImGuiTableFlags_>(m, "ImGuiTableFlags", nb::is_arithmetic())
         .value("NONE",                       ImGuiTableFlags_None)
         .value("Resizable",                  ImGuiTableFlags_Resizable)
         .value("Reorderable",                ImGuiTableFlags_Reorderable)
@@ -148,7 +181,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("SizingMask_",                ImGuiTableFlags_SizingMask_)
     ;
 
-    nb::enum_<ImGuiTableColumnFlags_>(m, "ImGuiTableColumnFlags")
+    nb::enum_<ImGuiTableColumnFlags_>(m, "ImGuiTableColumnFlags", nb::is_arithmetic())
         .value("NONE",                 ImGuiTableColumnFlags_None)
         .value("Disabled",             ImGuiTableColumnFlags_Disabled)
         .value("DefaultHide",          ImGuiTableColumnFlags_DefaultHide)
@@ -178,19 +211,19 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("NoDirectResize_",      ImGuiTableColumnFlags_NoDirectResize_)
     ;
 
-    nb::enum_<ImGuiTableRowFlags_>(m, "ImGuiTableRowFlags")
+    nb::enum_<ImGuiTableRowFlags_>(m, "ImGuiTableRowFlags", nb::is_arithmetic())
         .value("NONE",    ImGuiTableRowFlags_None)
         .value("Headers", ImGuiTableRowFlags_Headers)
     ;
 
-    nb::enum_<ImGuiTableBgTarget_>(m, "ImGuiTableBgTarget")
+    nb::enum_<ImGuiTableBgTarget_>(m, "ImGuiTableBgTarget", nb::is_arithmetic())
         .value("NONE",   ImGuiTableBgTarget_None)
         .value("RowBg0", ImGuiTableBgTarget_RowBg0)
         .value("RowBg1", ImGuiTableBgTarget_RowBg1)
         .value("CellBg", ImGuiTableBgTarget_CellBg)
     ;
 
-    nb::enum_<ImGuiFocusedFlags_>(m, "ImGuiFocusedFlags")
+    nb::enum_<ImGuiFocusedFlags_>(m, "ImGuiFocusedFlags", nb::is_arithmetic())
         .value("NONE",                ImGuiFocusedFlags_None)
         .value("ChildWindows",        ImGuiFocusedFlags_ChildWindows)
         .value("RootWindow",          ImGuiFocusedFlags_RootWindow)
@@ -199,7 +232,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("RootAndChildWindows", ImGuiFocusedFlags_RootAndChildWindows)
     ;
 
-    nb::enum_<ImGuiHoveredFlags_>(m, "ImGuiHoveredFlags")
+    nb::enum_<ImGuiHoveredFlags_>(m, "ImGuiHoveredFlags", nb::is_arithmetic())
         .value("NONE",                         ImGuiHoveredFlags_None)
         .value("ChildWindows",                 ImGuiHoveredFlags_ChildWindows)
         .value("RootWindow",                   ImGuiHoveredFlags_RootWindow)
@@ -214,7 +247,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("RootAndChildWindows",          ImGuiHoveredFlags_RootAndChildWindows)
     ;
 
-    nb::enum_<ImGuiDragDropFlags_>(m, "ImGuiDragDropFlags")
+    nb::enum_<ImGuiDragDropFlags_>(m, "ImGuiDragDropFlags", nb::is_arithmetic())
         .value("NONE",                     ImGuiDragDropFlags_None)
         .value("SourceNoPreviewTooltip",   ImGuiDragDropFlags_SourceNoPreviewTooltip)
         .value("SourceNoDisableHover",     ImGuiDragDropFlags_SourceNoDisableHover)
@@ -228,7 +261,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("AcceptPeekOnly",           ImGuiDragDropFlags_AcceptPeekOnly)
     ;
 
-    nb::enum_<ImGuiDataType_>(m, "ImGuiDataType")
+    nb::enum_<ImGuiDataType_>(m, "ImGuiDataType", nb::is_arithmetic())
         .value("S8",     ImGuiDataType_S8)
         .value("U8",     ImGuiDataType_U8)
         .value("S16",    ImGuiDataType_S16)
@@ -242,7 +275,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",  ImGuiDataType_COUNT)
     ;
 
-    nb::enum_<ImGuiDir_>(m, "ImGuiDir")
+    nb::enum_<ImGuiDir_>(m, "ImGuiDir", nb::is_arithmetic())
         .value("NONE",  ImGuiDir_None)
         .value("Left",  ImGuiDir_Left)
         .value("Right", ImGuiDir_Right)
@@ -251,13 +284,13 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT", ImGuiDir_COUNT)
     ;
 
-    nb::enum_<ImGuiSortDirection_>(m, "ImGuiSortDirection")
+    nb::enum_<ImGuiSortDirection_>(m, "ImGuiSortDirection", nb::is_arithmetic())
         .value("NONE",       ImGuiSortDirection_None)
         .value("Ascending",  ImGuiSortDirection_Ascending)
         .value("Descending", ImGuiSortDirection_Descending)
     ;
 
-    nb::enum_<ImGuiKey_>(m, "ImGuiKey")
+    nb::enum_<ImGuiKey_>(m, "ImGuiKey", nb::is_arithmetic())
         .value("NONE",               ImGuiKey_None)
         .value("Tab",                ImGuiKey_Tab)
         .value("LeftArrow",          ImGuiKey_LeftArrow)
@@ -401,7 +434,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("KeyPadEnter",        ImGuiKey_KeyPadEnter)
     ;
 
-    nb::enum_<ImGuiModFlags_>(m, "ImGuiModFlags")
+    nb::enum_<ImGuiModFlags_>(m, "ImGuiModFlags", nb::is_arithmetic())
         .value("NONE",  ImGuiModFlags_None)
         .value("Ctrl",  ImGuiModFlags_Ctrl)
         .value("Shift", ImGuiModFlags_Shift)
@@ -409,7 +442,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Super", ImGuiModFlags_Super)
     ;
 
-    nb::enum_<ImGuiNavInput_>(m, "ImGuiNavInput")
+    nb::enum_<ImGuiNavInput_>(m, "ImGuiNavInput", nb::is_arithmetic())
         .value("Activate",    ImGuiNavInput_Activate)
         .value("Cancel",      ImGuiNavInput_Cancel)
         .value("Input",       ImGuiNavInput_Input)
@@ -433,7 +466,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",       ImGuiNavInput_COUNT)
     ;
 
-    nb::enum_<ImGuiConfigFlags_>(m, "ImGuiConfigFlags")
+    nb::enum_<ImGuiConfigFlags_>(m, "ImGuiConfigFlags", nb::is_arithmetic())
         .value("NONE",                 ImGuiConfigFlags_None)
         .value("NavEnableKeyboard",    ImGuiConfigFlags_NavEnableKeyboard)
         .value("NavEnableGamepad",     ImGuiConfigFlags_NavEnableGamepad)
@@ -445,7 +478,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("IsTouchScreen",        ImGuiConfigFlags_IsTouchScreen)
     ;
 
-    nb::enum_<ImGuiBackendFlags_>(m, "ImGuiBackendFlags")
+    nb::enum_<ImGuiBackendFlags_>(m, "ImGuiBackendFlags", nb::is_arithmetic())
         .value("NONE",                 ImGuiBackendFlags_None)
         .value("HasGamepad",           ImGuiBackendFlags_HasGamepad)
         .value("HasMouseCursors",      ImGuiBackendFlags_HasMouseCursors)
@@ -453,7 +486,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("RendererHasVtxOffset", ImGuiBackendFlags_RendererHasVtxOffset)
     ;
 
-    nb::enum_<ImGuiCol_>(m, "ImGuiCol")
+    nb::enum_<ImGuiCol_>(m, "ImGuiCol", nb::is_arithmetic())
         .value("Text",                  ImGuiCol_Text)
         .value("TextDisabled",          ImGuiCol_TextDisabled)
         .value("WindowBg",              ImGuiCol_WindowBg)
@@ -510,7 +543,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",                 ImGuiCol_COUNT)
     ;
 
-    nb::enum_<ImGuiStyleVar_>(m, "ImGuiStyleVar")
+    nb::enum_<ImGuiStyleVar_>(m, "ImGuiStyleVar", nb::is_arithmetic())
         .value("Alpha",               ImGuiStyleVar_Alpha)
         .value("DisabledAlpha",       ImGuiStyleVar_DisabledAlpha)
         .value("WindowPadding",       ImGuiStyleVar_WindowPadding)
@@ -539,7 +572,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",               ImGuiStyleVar_COUNT)
     ;
 
-    nb::enum_<ImGuiButtonFlags_>(m, "ImGuiButtonFlags")
+    nb::enum_<ImGuiButtonFlags_>(m, "ImGuiButtonFlags", nb::is_arithmetic())
         .value("NONE",                ImGuiButtonFlags_None)
         .value("MouseButtonLeft",     ImGuiButtonFlags_MouseButtonLeft)
         .value("MouseButtonRight",    ImGuiButtonFlags_MouseButtonRight)
@@ -548,7 +581,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("MouseButtonDefault_", ImGuiButtonFlags_MouseButtonDefault_)
     ;
 
-    nb::enum_<ImGuiColorEditFlags_>(m, "ImGuiColorEditFlags")
+    nb::enum_<ImGuiColorEditFlags_>(m, "ImGuiColorEditFlags", nb::is_arithmetic())
         .value("NONE",             ImGuiColorEditFlags_None)
         .value("NoAlpha",          ImGuiColorEditFlags_NoAlpha)
         .value("NoPicker",         ImGuiColorEditFlags_NoPicker)
@@ -580,7 +613,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("InputMask_",       ImGuiColorEditFlags_InputMask_)
     ;
 
-    nb::enum_<ImGuiSliderFlags_>(m, "ImGuiSliderFlags")
+    nb::enum_<ImGuiSliderFlags_>(m, "ImGuiSliderFlags", nb::is_arithmetic())
         .value("NONE",            ImGuiSliderFlags_None)
         .value("AlwaysClamp",     ImGuiSliderFlags_AlwaysClamp)
         .value("Logarithmic",     ImGuiSliderFlags_Logarithmic)
@@ -590,14 +623,14 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("ClampOnInput",    ImGuiSliderFlags_ClampOnInput)
     ;
 
-    nb::enum_<ImGuiMouseButton_>(m, "ImGuiMouseButton")
+    nb::enum_<ImGuiMouseButton_>(m, "ImGuiMouseButton", nb::is_arithmetic())
         .value("Left",   ImGuiMouseButton_Left)
         .value("Right",  ImGuiMouseButton_Right)
         .value("Middle", ImGuiMouseButton_Middle)
         .value("COUNT",  ImGuiMouseButton_COUNT)
     ;
 
-    nb::enum_<ImGuiMouseCursor_>(m, "ImGuiMouseCursor")
+    nb::enum_<ImGuiMouseCursor_>(m, "ImGuiMouseCursor", nb::is_arithmetic())
         .value("NONE",       ImGuiMouseCursor_None)
         .value("Arrow",      ImGuiMouseCursor_Arrow)
         .value("TextInput",  ImGuiMouseCursor_TextInput)
@@ -611,7 +644,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",      ImGuiMouseCursor_COUNT)
     ;
 
-    nb::enum_<ImGuiCond_>(m, "ImGuiCond")
+    nb::enum_<ImGuiCond_>(m, "ImGuiCond", nb::is_arithmetic())
         .value("NONE",         ImGuiCond_None)
         .value("Always",       ImGuiCond_Always)
         .value("Once",         ImGuiCond_Once)
@@ -619,7 +652,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Appearing",    ImGuiCond_Appearing)
     ;
 
-    nb::enum_<ImDrawFlags_>(m, "ImDrawFlags")
+    nb::enum_<ImDrawFlags_>(m, "ImDrawFlags", nb::is_arithmetic())
         .value("NONE",                    ImDrawFlags_None)
         .value("Closed",                  ImDrawFlags_Closed)
         .value("RoundCornersTopLeft",     ImDrawFlags_RoundCornersTopLeft)
@@ -636,7 +669,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("RoundCornersMask_",       ImDrawFlags_RoundCornersMask_)
     ;
 
-    nb::enum_<ImDrawListFlags_>(m, "ImDrawListFlags")
+    nb::enum_<ImDrawListFlags_>(m, "ImDrawListFlags", nb::is_arithmetic())
         .value("NONE",                   ImDrawListFlags_None)
         .value("AntiAliasedLines",       ImDrawListFlags_AntiAliasedLines)
         .value("AntiAliasedLinesUseTex", ImDrawListFlags_AntiAliasedLinesUseTex)
@@ -644,21 +677,21 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("AllowVtxOffset",         ImDrawListFlags_AllowVtxOffset)
     ;
 
-    nb::enum_<ImFontAtlasFlags_>(m, "ImFontAtlasFlags")
+    nb::enum_<ImFontAtlasFlags_>(m, "ImFontAtlasFlags", nb::is_arithmetic())
         .value("NONE",               ImFontAtlasFlags_None)
         .value("NoPowerOfTwoHeight", ImFontAtlasFlags_NoPowerOfTwoHeight)
         .value("NoMouseCursors",     ImFontAtlasFlags_NoMouseCursors)
         .value("NoBakedLines",       ImFontAtlasFlags_NoBakedLines)
     ;
 
-    nb::enum_<ImGuiViewportFlags_>(m, "ImGuiViewportFlags")
+    nb::enum_<ImGuiViewportFlags_>(m, "ImGuiViewportFlags", nb::is_arithmetic())
         .value("NONE",              ImGuiViewportFlags_None)
         .value("IsPlatformWindow",  ImGuiViewportFlags_IsPlatformWindow)
         .value("IsPlatformMonitor", ImGuiViewportFlags_IsPlatformMonitor)
         .value("OwnedByApp",        ImGuiViewportFlags_OwnedByApp)
     ;
 
-    nb::enum_<ImDrawCornerFlags_>(m, "ImDrawCornerFlags")
+    nb::enum_<ImDrawCornerFlags_>(m, "ImDrawCornerFlags", nb::is_arithmetic())
         .value("NONE",     ImDrawCornerFlags_None)
         .value("TopLeft",  ImDrawCornerFlags_TopLeft)
         .value("TopRight", ImDrawCornerFlags_TopRight)
@@ -671,7 +704,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Right",    ImDrawCornerFlags_Right)
     ;
 
-    nb::enum_<ImGuiKeyModFlags_>(m, "ImGuiKeyModFlags")
+    nb::enum_<ImGuiKeyModFlags_>(m, "ImGuiKeyModFlags", nb::is_arithmetic())
         .value("NONE",  ImGuiKeyModFlags_None)
         .value("Ctrl",  ImGuiKeyModFlags_Ctrl)
         .value("Shift", ImGuiKeyModFlags_Shift)
@@ -679,7 +712,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Super", ImGuiKeyModFlags_Super)
     ;
 
-    nb::enum_<ImGuiItemFlags_>(m, "ImGuiItemFlags")
+    nb::enum_<ImGuiItemFlags_>(m, "ImGuiItemFlags", nb::is_arithmetic())
         .value("NONE",                     ImGuiItemFlags_None)
         .value("NoTabStop",                ImGuiItemFlags_NoTabStop)
         .value("ButtonRepeat",             ImGuiItemFlags_ButtonRepeat)
@@ -692,7 +725,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Inputable",                ImGuiItemFlags_Inputable)
     ;
 
-    nb::enum_<ImGuiItemStatusFlags_>(m, "ImGuiItemStatusFlags")
+    nb::enum_<ImGuiItemStatusFlags_>(m, "ImGuiItemStatusFlags", nb::is_arithmetic())
         .value("NONE",             ImGuiItemStatusFlags_None)
         .value("HoveredRect",      ImGuiItemStatusFlags_HoveredRect)
         .value("HasDisplayRect",   ImGuiItemStatusFlags_HasDisplayRect)
@@ -705,29 +738,29 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("FocusedByTabbing", ImGuiItemStatusFlags_FocusedByTabbing)
     ;
 
-    nb::enum_<ImGuiSeparatorFlags_>(m, "ImGuiSeparatorFlags")
+    nb::enum_<ImGuiSeparatorFlags_>(m, "ImGuiSeparatorFlags", nb::is_arithmetic())
         .value("NONE",           ImGuiSeparatorFlags_None)
         .value("Horizontal",     ImGuiSeparatorFlags_Horizontal)
         .value("Vertical",       ImGuiSeparatorFlags_Vertical)
         .value("SpanAllColumns", ImGuiSeparatorFlags_SpanAllColumns)
     ;
 
-    nb::enum_<ImGuiTextFlags_>(m, "ImGuiTextFlags")
+    nb::enum_<ImGuiTextFlags_>(m, "ImGuiTextFlags", nb::is_arithmetic())
         .value("NONE",                       ImGuiTextFlags_None)
         .value("NoWidthForLargeClippedText", ImGuiTextFlags_NoWidthForLargeClippedText)
     ;
 
-    nb::enum_<ImGuiTooltipFlags_>(m, "ImGuiTooltipFlags")
+    nb::enum_<ImGuiTooltipFlags_>(m, "ImGuiTooltipFlags", nb::is_arithmetic())
         .value("NONE",                    ImGuiTooltipFlags_None)
         .value("OverridePreviousTooltip", ImGuiTooltipFlags_OverridePreviousTooltip)
     ;
 
-    nb::enum_<ImGuiLayoutType_>(m, "ImGuiLayoutType")
+    nb::enum_<ImGuiLayoutType_>(m, "ImGuiLayoutType", nb::is_arithmetic())
         .value("Horizontal", ImGuiLayoutType_Horizontal)
         .value("Vertical",   ImGuiLayoutType_Vertical)
     ;
 
-    nb::enum_<ImGuiLogType>(m, "ImGuiLogType")
+    nb::enum_<ImGuiLogType>(m, "ImGuiLogType", nb::is_arithmetic())
         .value("NONE",      ImGuiLogType_None)
         .value("TTY",       ImGuiLogType_TTY)
         .value("File",      ImGuiLogType_File)
@@ -735,24 +768,24 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("Clipboard", ImGuiLogType_Clipboard)
     ;
 
-    nb::enum_<ImGuiAxis>(m, "ImGuiAxis")
+    nb::enum_<ImGuiAxis>(m, "ImGuiAxis", nb::is_arithmetic())
         .value("NONE", ImGuiAxis_None)
         .value("X",    ImGuiAxis_X)
         .value("Y",    ImGuiAxis_Y)
     ;
 
-    nb::enum_<ImGuiPlotType>(m, "ImGuiPlotType")
+    nb::enum_<ImGuiPlotType>(m, "ImGuiPlotType", nb::is_arithmetic())
         .value("Lines",     ImGuiPlotType_Lines)
         .value("Histogram", ImGuiPlotType_Histogram)
     ;
 
-    nb::enum_<ImGuiPopupPositionPolicy>(m, "ImGuiPopupPositionPolicy")
+    nb::enum_<ImGuiPopupPositionPolicy>(m, "ImGuiPopupPositionPolicy", nb::is_arithmetic())
         .value("Default",  ImGuiPopupPositionPolicy_Default)
         .value("ComboBox", ImGuiPopupPositionPolicy_ComboBox)
         .value("Tooltip",  ImGuiPopupPositionPolicy_Tooltip)
     ;
 
-    nb::enum_<ImGuiNextWindowDataFlags_>(m, "ImGuiNextWindowDataFlags")
+    nb::enum_<ImGuiNextWindowDataFlags_>(m, "ImGuiNextWindowDataFlags", nb::is_arithmetic())
         .value("NONE",              ImGuiNextWindowDataFlags_None)
         .value("HasPos",            ImGuiNextWindowDataFlags_HasPos)
         .value("HasSize",           ImGuiNextWindowDataFlags_HasSize)
@@ -764,13 +797,13 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("HasScroll",         ImGuiNextWindowDataFlags_HasScroll)
     ;
 
-    nb::enum_<ImGuiNextItemDataFlags_>(m, "ImGuiNextItemDataFlags")
+    nb::enum_<ImGuiNextItemDataFlags_>(m, "ImGuiNextItemDataFlags", nb::is_arithmetic())
         .value("NONE",     ImGuiNextItemDataFlags_None)
         .value("HasWidth", ImGuiNextItemDataFlags_HasWidth)
         .value("HasOpen",  ImGuiNextItemDataFlags_HasOpen)
     ;
 
-    nb::enum_<ImGuiInputEventType>(m, "ImGuiInputEventType")
+    nb::enum_<ImGuiInputEventType>(m, "ImGuiInputEventType", nb::is_arithmetic())
         .value("NONE",        ImGuiInputEventType_None)
         .value("MousePos",    ImGuiInputEventType_MousePos)
         .value("MouseWheel",  ImGuiInputEventType_MouseWheel)
@@ -781,7 +814,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",       ImGuiInputEventType_COUNT)
     ;
 
-    nb::enum_<ImGuiInputSource>(m, "ImGuiInputSource")
+    nb::enum_<ImGuiInputSource>(m, "ImGuiInputSource", nb::is_arithmetic())
         .value("NONE",      ImGuiInputSource_None)
         .value("Mouse",     ImGuiInputSource_Mouse)
         .value("Keyboard",  ImGuiInputSource_Keyboard)
@@ -791,7 +824,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("COUNT",     ImGuiInputSource_COUNT)
     ;
 
-    nb::enum_<ImGuiNavReadMode>(m, "ImGuiNavReadMode")
+    nb::enum_<ImGuiNavReadMode>(m, "ImGuiNavReadMode", nb::is_arithmetic())
         .value("Down",       ImGuiNavReadMode_Down)
         .value("Pressed",    ImGuiNavReadMode_Pressed)
         .value("Released",   ImGuiNavReadMode_Released)
@@ -800,14 +833,14 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("RepeatFast", ImGuiNavReadMode_RepeatFast)
     ;
 
-    nb::enum_<ImGuiActivateFlags_>(m, "ImGuiActivateFlags")
+    nb::enum_<ImGuiActivateFlags_>(m, "ImGuiActivateFlags", nb::is_arithmetic())
         .value("NONE",               ImGuiActivateFlags_None)
         .value("PreferInput",        ImGuiActivateFlags_PreferInput)
         .value("PreferTweak",        ImGuiActivateFlags_PreferTweak)
         .value("TryToPreserveState", ImGuiActivateFlags_TryToPreserveState)
     ;
 
-    nb::enum_<ImGuiScrollFlags_>(m, "ImGuiScrollFlags")
+    nb::enum_<ImGuiScrollFlags_>(m, "ImGuiScrollFlags", nb::is_arithmetic())
         .value("NONE",               ImGuiScrollFlags_None)
         .value("KeepVisibleEdgeX",   ImGuiScrollFlags_KeepVisibleEdgeX)
         .value("KeepVisibleEdgeY",   ImGuiScrollFlags_KeepVisibleEdgeY)
@@ -820,7 +853,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("MaskY_",             ImGuiScrollFlags_MaskY_)
     ;
 
-    nb::enum_<ImGuiNavHighlightFlags_>(m, "ImGuiNavHighlightFlags")
+    nb::enum_<ImGuiNavHighlightFlags_>(m, "ImGuiNavHighlightFlags", nb::is_arithmetic())
         .value("NONE",        ImGuiNavHighlightFlags_None)
         .value("TypeDefault", ImGuiNavHighlightFlags_TypeDefault)
         .value("TypeThin",    ImGuiNavHighlightFlags_TypeThin)
@@ -828,7 +861,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("NoRounding",  ImGuiNavHighlightFlags_NoRounding)
     ;
 
-    nb::enum_<ImGuiNavDirSourceFlags_>(m, "ImGuiNavDirSourceFlags")
+    nb::enum_<ImGuiNavDirSourceFlags_>(m, "ImGuiNavDirSourceFlags", nb::is_arithmetic())
         .value("NONE",        ImGuiNavDirSourceFlags_None)
         .value("RawKeyboard", ImGuiNavDirSourceFlags_RawKeyboard)
         .value("Keyboard",    ImGuiNavDirSourceFlags_Keyboard)
@@ -836,7 +869,7 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("PadLStick",   ImGuiNavDirSourceFlags_PadLStick)
     ;
 
-    nb::enum_<ImGuiNavMoveFlags_>(m, "ImGuiNavMoveFlags")
+    nb::enum_<ImGuiNavMoveFlags_>(m, "ImGuiNavMoveFlags", nb::is_arithmetic())
         .value("NONE",                ImGuiNavMoveFlags_None)
         .value("LoopX",               ImGuiNavMoveFlags_LoopX)
         .value("LoopY",               ImGuiNavMoveFlags_LoopY)
@@ -853,13 +886,13 @@ void imgui_def_enums_auto(nb::module_ & m) {
         .value("DontSetNavHighlight", ImGuiNavMoveFlags_DontSetNavHighlight)
     ;
 
-    nb::enum_<ImGuiNavLayer>(m, "ImGuiNavLayer")
+    nb::enum_<ImGuiNavLayer>(m, "ImGuiNavLayer", nb::is_arithmetic())
         .value("Main",  ImGuiNavLayer_Main)
         .value("Menu",  ImGuiNavLayer_Menu)
         .value("COUNT", ImGuiNavLayer_COUNT)
     ;
 
-    nb::enum_<ImGuiContextHookType>(m, "ImGuiContextHookType")
+    nb::enum_<ImGuiContextHookType>(m, "ImGuiContextHookType", nb::is_arithmetic())
         .value("NewFramePre",     ImGuiContextHookType_NewFramePre)
         .value("NewFramePost",    ImGuiContextHookType_NewFramePost)
         .value("EndFramePre",     ImGuiContextHookType_EndFramePre)
